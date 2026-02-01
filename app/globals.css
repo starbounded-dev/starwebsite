@@ -1,26 +1,156 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --ink: #e7edf6;
+  --ivory: #0b0f15;
+  --ivory-deep: #141a24;
+  --teal: #35d3c2;
+  --teal-bright: #6ff6e9;
+  --amber: #3d4b5f;
+  --ember: #1f2735;
+  --slate: #aab4c2;
+  --slate-soft: #7c8798;
+  --mist: #d2dae6;
+  --glow-teal: 0 0 40px rgba(53, 211, 194, 0.25);
+  --glow-amber: 0 0 40px rgba(90, 110, 135, 0.18);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: var(--ink);
+  --color-ivory: var(--ivory);
+  --color-ivory-deep: var(--ivory-deep);
+  --color-teal: var(--teal);
+  --color-teal-bright: var(--teal-bright);
+  --color-amber: var(--amber);
+  --color-ember: var(--ember);
+  --color-slate: var(--slate);
+  --color-slate-soft: var(--slate-soft);
+  --color-mist: var(--mist);
+  --shadow-glow-teal: var(--glow-teal);
+  --shadow-glow-amber: var(--glow-amber);
+  --font-sans: var(--font-plex);
+  --font-display: var(--font-space);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  background:
+    radial-gradient(1200px 700px at 10% -10%, rgba(53, 211, 194, 0.18), transparent 55%),
+    radial-gradient(900px 600px at 90% -20%, rgba(90, 110, 135, 0.16), transparent 60%),
+    linear-gradient(180deg, #0a0e14 0%, #0d121b 45%, #0b0f15 100%);
+  color: var(--ink);
+  font-family: var(--font-sans), "IBM Plex Sans", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-display), "Space Grotesk", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: rgba(53, 211, 194, 0.35);
+  color: #070b10;
+}
+
+.bg-starfield {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(231, 237, 246, 0.22), transparent 50%),
+    radial-gradient(1px 1px at 120px 140px, rgba(231, 237, 246, 0.16), transparent 45%),
+    radial-gradient(1.5px 1.5px at 70px 90px, rgba(231, 237, 246, 0.12), transparent 55%),
+    radial-gradient(1px 1px at 160px 40px, rgba(231, 237, 246, 0.18), transparent 50%);
+  background-size: 180px 180px, 220px 220px, 240px 240px, 260px 260px;
+}
+
+.bg-grid-fade {
+  background-image:
+    linear-gradient(to right, rgba(231, 237, 246, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(231, 237, 246, 0.08) 1px, transparent 1px);
+  background-size: 140px 140px;
+  mask-image: linear-gradient(180deg, transparent 0%, black 35%, black 70%, transparent 100%);
+}
+
+.panel-glow {
+  box-shadow: var(--glow-teal);
+}
+
+.accent-glow {
+  box-shadow: var(--glow-amber);
+}
+
+@keyframes float-slow {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes tilt-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes reveal-up {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 10s ease-in-out infinite;
+}
+
+.animate-tilt-slow {
+  animation: tilt-slow 14s ease-in-out infinite;
+}
+
+.animate-reveal {
+  animation: reveal-up 0.8s ease both;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 18s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-tilt-slow,
+  .animate-reveal,
+  .animate-spin-slow {
+    animation: none !important;
+  }
 }
