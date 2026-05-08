@@ -1,478 +1,459 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { FeatureCard } from "@/components/FeatureCard";
 import { Footer } from "@/components/Footer";
 import { MetricChip } from "@/components/MetricChip";
 import { Nav } from "@/components/Nav";
 
 export const metadata: Metadata = {
-  title: "Lux Engine",
+  title: "LuxEngine",
   description:
-    "Lux Engine is an open-source C++ game engine by Starbounded Studio, focused on Windows-first rendering and approachable architecture.",
+    "LuxEngine is Starbounded Studio's early-stage open-source C++ interactive application and rendering engine for Windows.",
   openGraph: {
-    title: "Lux Engine | Starbounded Studio",
+    title: "LuxEngine | Starbounded Studio",
     description:
-      "Lux Engine is an open-source C++ game engine by Starbounded Studio, focused on Windows-first rendering and approachable architecture.",
+      "An early-stage open-source C++ interactive application and rendering engine for Windows.",
   },
 };
-
-const focusAreas = [
-  {
-    title: "Render core",
-    description: "Modern rendering foundation with Vulkan-first workflows.",
-    icon: <SparkIcon />,
-  },
-  {
-    title: "Editor tooling",
-    description: "Scene creation, inspector workflows, and asset iteration.",
-    icon: <ViewportIcon />,
-  },
-  {
-    title: "Scripting",
-    description: "Planned scripting layer for gameplay and interactions.",
-    icon: <ScriptIcon />,
-  },
-  {
-    title: "Asset pipeline",
-    description: "Import, manage, and iterate on content at scale.",
-    icon: <LayersIcon />,
-  },
-];
-
-const luxRoadmap = [
-  {
-    title: "Fast 2D rendering",
-    description: "UI, particles, sprites, and immediate tooling.",
-    icon: <LayersIcon />,
-  },
-  {
-    title: "Physically-based 3D",
-    description: "High-fidelity PBR lighting and material systems.",
-    icon: <SparkIcon />,
-  },
-  {
-    title: "Cross-platform",
-    description: "Windows, Mac, Linux, Android, and iOS targets.",
-    icon: <PlatformIcon />,
-  },
-  {
-    title: "Native APIs",
-    description: "DirectX, Vulkan, and Metal backends.",
-    icon: <KernelIcon />,
-  },
-  {
-    title: "Viewer + editor",
-    description: "Full editor and viewer applications.",
-    icon: <ViewportIcon />,
-  },
-  {
-    title: "Scripting",
-    description: "Fully scripted interaction and behavior.",
-    icon: <ScriptIcon />,
-  },
-  {
-    title: "Physics + terrain",
-    description: "Physics integration with procedural worlds.",
-    icon: <TerrainIcon />,
-  },
-  {
-    title: "AI + audio",
-    description: "AI tooling and integrated audio systems.",
-    icon: <AudioIcon />,
-  },
-];
 
 const quickFacts = [
   {
     value: "C++",
     label: "Core language",
-    detail: "Runtime, renderer, and editor tooling.",
+    detail: "Runtime, renderer, editor, and engine systems.",
+    accent: "purple",
+  },
+  {
+    value: "Windows",
+    label: "Current target",
+    detail: "Visual Studio 2022 is the recommended development path.",
+    accent: "yellow",
+  },
+  {
+    value: "Vulkan",
+    label: "Setup requirement",
+    detail: "The Vulkan SDK is part of the current rendering setup.",
+    accent: "cyan",
   },
   {
     value: "GPL-3.0",
     label: "License",
-    detail: "Open-source with community contributions.",
+    detail: "Open-source and built where contributors can follow along.",
+    accent: "coral",
+  },
+] as const;
+
+const focusAreas = [
+  {
+    title: "Rendering core",
+    description:
+      "The base for planned high-fidelity 3D rendering, future 2D systems, and graphics API work.",
+    icon: <SparkIcon />,
+    accent: "purple",
   },
   {
-    value: "Windows",
-    label: "Primary target",
-    detail: "Visual Studio 2022 recommended.",
+    title: "Editor workflows",
+    description:
+      "Viewer and editor applications are planned around practical scene creation and iteration.",
+    icon: <ViewportIcon />,
+    accent: "yellow",
   },
   {
-    value: "Vulkan",
-    label: "Graphics",
-    detail: "SDK required during setup.",
+    title: "Asset model",
+    description:
+      "Projects own asset managers, scenes are treated as assets, and editor/runtime boundaries are being refined.",
+    icon: <LayersIcon />,
+    accent: "cyan",
   },
+  {
+    title: "Teaching architecture",
+    description:
+      "LuxEngine is built to become a capable engine while also documenting how engine systems fit together.",
+    icon: <BookIcon />,
+    accent: "coral",
+  },
+] as const;
+
+const roadmap = [
+  "Fast 2D rendering for UI, particles, and sprites.",
+  "Physically based 3D rendering and material systems.",
+  "DirectX, Vulkan, and Metal rendering backends over time.",
+  "Viewer and editor applications for real project workflows.",
+  "Scripting, physics, procedural worlds, AI, and audio systems.",
+  "Long-term support beyond Windows for desktop and mobile targets.",
 ];
 
 const setupSteps = [
   {
     title: "Clone with submodules",
-    detail: "Lux Engine uses git submodules for third-party dependencies.",
+    detail: "LuxEngine depends on third-party submodules.",
     code: "git clone --recursive https://github.com/starbounded-dev/LuxEngine",
   },
   {
     title: "Run Setup.bat",
     detail:
-      "Scripts download prerequisites and prompt for Vulkan SDK if missing.",
+      "The setup script checks prerequisites and prompts for Vulkan SDK when needed.",
     code: "scripts/Setup.bat",
   },
   {
     title: "Generate projects",
-    detail:
-      "Win-GenProjects.bat builds the Visual Studio solution for Windows.",
+    detail: "Create the Visual Studio solution for Windows development.",
     code: "scripts/Win-GenProjects.bat",
-  },
-];
-
-const communityLinks = [
-  {
-    title: "Lux Engine GitHub",
-    description: "Source, issues, and project discussions.",
-    href: "https://github.com/starbounded-dev/LuxEngine",
-  },
-  {
-    title: "Roadmap board",
-    description: "Milestones and feature planning in Milanote.",
-    href: "https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h",
-  },
-  {
-    title: "Starbounded Studio",
-    description: "Back to the studio overview and other projects.",
-    href: "/",
   },
 ];
 
 export default function LuxPage() {
   return (
-    <div className="relative min-h-screen overflow-hidden text-ink">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-teal/25 blur-3xl" />
-        <div className="absolute right-[-120px] top-24 h-[420px] w-[420px] rounded-full bg-slate/30 blur-3xl" />
-        <div className="absolute inset-0 bg-starfield opacity-70" />
-        <div className="absolute inset-0 bg-grid-fade opacity-50" />
-      </div>
+    <div className="min-h-screen overflow-hidden text-ink">
+      <Nav
+        items={[
+          { label: "Overview", href: "#overview" },
+          { label: "Focus", href: "#focus" },
+          { label: "Roadmap", href: "#roadmap" },
+          { label: "Setup", href: "#setup" },
+        ]}
+        primaryCta={{
+          label: "GitHub",
+          href: "https://github.com/starbounded-dev/LuxEngine",
+        }}
+        secondaryCta={{ label: "Studio", href: "/" }}
+      />
 
-      <div className="relative z-10">
-        <Nav
-          items={[
-            { label: "Overview", href: "#overview" },
-            { label: "Focus", href: "#features" },
-            { label: "Roadmap", href: "#roadmap" },
-            { label: "Get started", href: "#get-started" },
-            { label: "Community", href: "#community" },
-          ]}
-          primaryCta={{
-            label: "GitHub",
-            href: "https://github.com/starbounded-dev/LuxEngine",
-          }}
-          secondaryCta={{ label: "Back to Studio", href: "/" }}
-        />
+      <main>
+        <section
+          id="overview"
+          className="mx-auto grid min-h-[680px] max-w-7xl items-center gap-12 px-5 pb-16 pt-6 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10"
+        >
+          <div className="max-w-2xl">
+            <h1 className="max-w-[12ch] text-4xl font-semibold leading-[1.05] text-ink sm:max-w-none sm:text-6xl lg:text-7xl animate-reveal">
+              LuxEngine is an engine you can learn from.
+            </h1>
+            <p
+              className="mt-6 max-w-[350px] text-base leading-7 text-muted sm:max-w-xl sm:text-lg sm:leading-8 animate-reveal"
+              style={{ animationDelay: "90ms" }}
+            >
+              Starbounded Studio&apos;s first engine is an early-stage C++
+              interactive application and rendering engine for Windows. The aim
+              is two-part: build a serious 3D engine and make the architecture
+              understandable as it grows.
+            </p>
+            <div
+              className="mt-8 flex max-w-[350px] flex-col gap-3 sm:max-w-none sm:flex-row animate-reveal"
+              style={{ animationDelay: "170ms" }}
+            >
+              <a
+                href="https://github.com/starbounded-dev/LuxEngine"
+                className="inline-flex w-full items-center justify-center rounded-lg bg-purple px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-purple-deep sm:w-auto"
+              >
+                View repository
+              </a>
+              <a
+                href="https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h"
+                className="inline-flex w-full items-center justify-center rounded-lg border border-line bg-surface px-6 py-3 text-sm font-semibold text-ink transition hover:border-purple/35 hover:text-purple sm:w-auto"
+              >
+                View roadmap
+              </a>
+            </div>
+          </div>
 
-        <main>
-          <section
-            id="overview"
-            className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-16 pt-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-10"
-          >
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-ink/15 bg-ivory-deep/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate">
-                <span className="h-2 w-2 rounded-full bg-teal" />
-                Lux Engine
+          <LuxHeroVisual />
+        </section>
+
+        <section id="focus" className="section-band border-y border-line">
+          <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-10">
+            <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+              <div>
+                <h2 className="text-4xl font-semibold text-ink sm:text-5xl">
+                  What and why.
+                </h2>
+                <p className="mt-5 text-base leading-7 text-muted">
+                  LuxEngine exists to make engine architecture visible while it
+                  grows into useful technology. The current center of gravity is
+                  rendering, editor tooling, project structure, and asset
+                  workflows.
+                </p>
               </div>
-              <h1 className="text-5xl font-semibold leading-[1.05] text-ink sm:text-6xl">
-                An open-source engine for learning and building.
-              </h1>
-              <p className="text-lg leading-8 text-slate">
-                Lux Engine is Starbounded Studio&apos;s C++ game engine. It is
-                Windows-first, built for modern rendering workflows, and
-                designed to teach engine architecture through real code.
-              </p>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="https://github.com/starbounded-dev/LuxEngine"
-                  className="inline-flex items-center justify-center rounded-full bg-teal px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-ivory transition hover:bg-teal-bright"
-                >
-                  View repository
-                </a>
-                <a
-                  href="https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h"
-                  className="inline-flex items-center justify-center rounded-full border border-ink/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-ink transition hover:border-ink/60 hover:bg-ivory-deep"
-                >
-                  View roadmap
-                </a>
-              </div>
-              <div className="flex flex-wrap gap-6 text-xs font-semibold uppercase tracking-[0.32em] text-slate/70">
-                <span>Open-source</span>
-                <span>Vulkan-first</span>
-                <span>Editor tooling</span>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {quickFacts.map((fact) => (
+                  <MetricChip key={fact.label} {...fact} />
+                ))}
               </div>
             </div>
-
-            <div className="relative">
-              <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full bg-teal/30 blur-3xl" />
-              <div className="absolute -bottom-10 right-0 h-24 w-24 rounded-full bg-slate/30 blur-3xl" />
-              <div className="relative rounded-3xl border border-ink/10 bg-ivory-deep/70 p-6 backdrop-blur">
-                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-slate">
-                  <span>Lux Editor</span>
-                  <span className="flex items-center gap-2 text-teal">
-                    <span className="h-2 w-2 rounded-full bg-teal" />
-                    Preview
-                  </span>
-                </div>
-                <div className="mt-6">
-                  <LuxEditorPreview />
-                </div>
-                <div className="mt-6 grid grid-cols-2 gap-4 text-sm text-slate">
-                  {[
-                    { label: "Renderer", value: "Vulkan" },
-                    { label: "Editor", value: "In progress" },
-                    { label: "Scripting", value: "Planned" },
-                    { label: "Pipeline", value: "Active" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-xl border border-ink/10 bg-ivory-deep/60 px-4 py-3"
-                    >
-                      <div className="text-xs uppercase tracking-[0.3em] text-slate/60">
-                        {item.label}
-                      </div>
-                      <div className="mt-2 text-lg font-semibold text-ink">
-                        {item.value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section id="features" className="mx-auto max-w-6xl px-6 py-16 lg:px-10">
-            <div className="text-center">
-              <div className="text-xs font-semibold uppercase tracking-[0.32em] text-slate">
-                Focus areas
-              </div>
-              <h2 className="mt-3 text-3xl font-semibold text-ink sm:text-4xl">
-                What Lux is building right now.
-              </h2>
-              <p className="mt-4 text-base leading-7 text-slate">
-                The current focus is on rendering, tooling, and the engine core
-                that powers future gameplay systems.
-              </p>
-            </div>
-            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {focusAreas.map((feature) => (
                 <FeatureCard key={feature.title} {...feature} />
               ))}
             </div>
-            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {quickFacts.map((fact) => (
-                <MetricChip key={fact.label} {...fact} />
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-24 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:px-10">
+          <ArchitectureTablet />
+          <div>
+            <h2 className="text-4xl font-semibold text-ink sm:text-5xl">
+              Built around projects, assets, and scenes.
+            </h2>
+            <p className="mt-5 text-base leading-7 text-muted">
+              LuxEngine&apos;s editor direction is more than a renderer window. The
+              project owns the active asset manager, scenes move through the
+              asset system, and editor/runtime asset managers define where
+              registry data and loaded resources live.
+            </p>
+            <div className="mt-8 space-y-3">
+              {[
+                "Project-owned asset access through the active project.",
+                "Scenes handled as first-class assets before editing copies.",
+                "Separate editor and runtime paths for asset ownership.",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="flex items-start gap-3 rounded-lg border border-line bg-surface px-4 py-3 shadow-soft"
+                >
+                  <span className="mt-1.5 h-2.5 w-2.5 rounded-full bg-purple" />
+                  <span className="text-sm leading-6 text-muted">{item}</span>
+                </div>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section id="roadmap" className="mx-auto max-w-6xl px-6 py-16 lg:px-10">
-            <div className="text-center">
-              <div className="text-xs font-semibold uppercase tracking-[0.32em] text-slate">
-                Roadmap
-              </div>
-              <h2 className="mt-3 text-3xl font-semibold text-ink sm:text-4xl">
-                Planned systems and features.
+        <section id="roadmap" className="border-y border-line bg-surface">
+          <div className="mx-auto grid max-w-7xl gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:px-10">
+            <div>
+              <h2 className="text-4xl font-semibold text-ink sm:text-5xl">
+                The roadmap is ambitious by design.
               </h2>
-              <p className="mt-4 text-base leading-7 text-slate">
-                These are the major milestones guiding Lux Engine development.
+              <p className="mt-5 text-base leading-7 text-muted">
+                The public plan spans rendering, editor applications, scripting,
+                physics, procedural generation, AI, audio, and more platform
+                support. The site now frames that as a roadmap, not a claim that
+                everything is finished.
               </p>
               <a
                 href="https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h"
-                className="mt-6 inline-flex items-center justify-center rounded-full border border-ink/20 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-ink transition hover:border-ink/60 hover:bg-ivory-deep"
+                className="mt-8 inline-flex items-center justify-center rounded-lg bg-engine px-5 py-3 text-sm font-semibold text-white transition hover:bg-purple-deep"
               >
-                View Milanote roadmap
+                Open Milanote roadmap
               </a>
             </div>
-            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {luxRoadmap.map((feature) => (
-                <FeatureCard key={feature.title} {...feature} />
+            <div className="grid gap-3 sm:grid-cols-2">
+              {roadmap.map((item, index) => (
+                <article
+                  key={item}
+                  className="rounded-lg border border-line bg-paper p-5 shadow-soft"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-yellow text-sm font-semibold text-ink">
+                    {index + 1}
+                  </div>
+                  <p className="mt-5 text-sm leading-6 text-muted">{item}</p>
+                </article>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section
-            id="get-started"
-            className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:px-10"
-          >
-            <div className="space-y-6">
-              <div className="text-xs font-semibold uppercase tracking-[0.32em] text-slate">
-                Get started
-              </div>
-              <h2 className="text-3xl font-semibold text-ink sm:text-4xl">
-                Build Lux Engine locally.
+        <section
+          id="setup"
+          className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-24 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10"
+        >
+          <div>
+            <h2 className="text-4xl font-semibold text-ink sm:text-5xl">
+              Build it locally on Windows.
+            </h2>
+            <p className="mt-5 text-base leading-7 text-muted">
+              The current README recommends Visual Studio 2022 and a
+              Windows-focused workflow. Setup downloads prerequisites, handles
+              Vulkan SDK checks, and generates the solution.
+            </p>
+          </div>
+          <div className="grid gap-4">
+            {setupSteps.map((step) => (
+              <article
+                key={step.title}
+                className="rounded-lg border border-line bg-surface p-5 shadow-soft"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-ink">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-muted">
+                      {step.detail}
+                    </p>
+                  </div>
+                  <span className="rounded-md bg-cyan/10 px-3 py-1 text-xs font-semibold text-cyan">
+                    Windows
+                  </span>
+                </div>
+                <pre className="mt-4 overflow-x-auto rounded-lg border border-line bg-engine px-4 py-3 text-xs text-white">
+                  <code>{step.code}</code>
+                </pre>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="px-5 pb-24 sm:px-8 lg:px-10">
+          <div className="mx-auto grid max-w-7xl gap-8 overflow-hidden rounded-lg bg-purple p-8 text-white shadow-tablet sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <h2 className="text-4xl font-semibold">
+                Follow LuxEngine while it is still being shaped.
               </h2>
-              <p className="text-base leading-7 text-slate">
-                Lux Engine currently targets Windows. Visual Studio 2022 is
-                recommended for development. Follow the setup steps below or
-                read the repository README for the full instructions.
+              <p className="mt-4 max-w-2xl text-base leading-7 text-white/75">
+                The engine is early enough for design decisions to matter and
+                public enough for builders to learn from the process.
               </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
               <a
                 href="https://github.com/starbounded-dev/LuxEngine"
-                className="inline-flex items-center justify-center rounded-full border border-ink/20 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-ink transition hover:border-ink/60 hover:bg-ivory-deep"
+                className="inline-flex items-center justify-center rounded-lg bg-yellow px-5 py-3 text-sm font-semibold text-ink transition hover:bg-white"
               >
-                Read the README
+                GitHub
+              </a>
+              <a
+                href="mailto:hello@starbounded.com"
+                className="inline-flex items-center justify-center rounded-lg border border-white/25 px-5 py-3 text-sm font-semibold text-white transition hover:border-white"
+              >
+                Contact
               </a>
             </div>
-            <div className="space-y-4">
-              {setupSteps.map((step) => (
+          </div>
+        </section>
+      </main>
+
+      <Footer
+        links={[
+          { label: "Overview", href: "#overview" },
+          { label: "Focus", href: "#focus" },
+          { label: "Roadmap", href: "#roadmap" },
+          { label: "Setup", href: "#setup" },
+        ]}
+        socials={[
+          { label: "Email", href: "mailto:hello@starbounded.com" },
+          {
+            label: "GitHub",
+            href: "https://github.com/starbounded-dev/LuxEngine",
+          },
+          {
+            label: "Roadmap",
+            href: "https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h",
+          },
+        ]}
+      />
+    </div>
+  );
+}
+
+function LuxHeroVisual() {
+  return (
+    <div
+      className="relative mx-auto min-h-[470px] w-full max-w-[350px] animate-reveal sm:max-w-none lg:min-h-[560px]"
+      style={{ animationDelay: "150ms" }}
+    >
+      <div className="absolute left-8 top-6 z-20 w-48 rounded-lg bg-yellow p-4 text-ink shadow-tablet sm:left-2">
+        <div className="text-xs font-semibold uppercase text-ink/70">
+          Current path
+        </div>
+        <div className="mt-5 space-y-3 text-sm font-semibold">
+          <div>Visual Studio 2022</div>
+          <div>Vulkan SDK</div>
+          <div>Premake projects</div>
+        </div>
+      </div>
+
+      <div className="absolute right-0 top-20 w-[84%] rounded-lg bg-engine p-4 text-white shadow-tablet">
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <span className="text-xs font-semibold text-white/60">
+            LuxEngine workspace
+          </span>
+          <span className="rounded-md bg-cyan px-2 py-1 text-xs font-semibold text-ink">
+            C++
+          </span>
+        </div>
+        <div className="tablet-grid mt-4 grid min-h-72 gap-4 rounded-md bg-purple-deep p-4 md:grid-cols-[0.78fr_1.22fr]">
+          <div className="space-y-3">
+            {["Core", "Editor", "Sandbox", "ScriptCore"].map((item) => (
+              <div
+                key={item}
+                className="rounded-md bg-white/10 px-3 py-3 text-xs font-semibold text-white/75"
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+          <div className="rounded-md bg-surface p-4 text-ink">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold">Scene asset</span>
+              <span className="rounded-md bg-purple/10 px-2 py-1 text-xs font-semibold text-purple">
+                active
+              </span>
+            </div>
+            <div className="mt-5 h-36 rounded-md bg-paper">
+              <div className="grid h-full grid-cols-3 gap-3 p-3">
+                <div className="rounded-md bg-purple/15" />
+                <div className="rounded-md bg-yellow/40" />
+                <div className="rounded-md bg-cyan/20" />
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              {["Asset", "Scene", "Editor"].map((item) => (
                 <div
-                  key={step.title}
-                  className="rounded-2xl border border-ink/10 bg-ivory-deep/70 p-5 shadow-[0_24px_60px_-50px_rgba(6,10,18,0.7)]"
+                  key={item}
+                  className="rounded-md border border-line px-2 py-2 text-center text-xs font-semibold"
                 >
-                  <div className="text-sm font-semibold text-ink">
-                    {step.title}
-                  </div>
-                  <p className="mt-2 text-sm text-slate">{step.detail}</p>
-                  <pre className="mt-4 overflow-x-auto rounded-xl border border-ink/10 bg-ivory/80 px-4 py-3 text-xs text-ink">
-                    <code>{step.code}</code>
-                  </pre>
+                  {item}
                 </div>
               ))}
             </div>
-          </section>
+          </div>
+        </div>
+      </div>
 
-          <section id="community" className="mx-auto max-w-6xl px-6 py-16 lg:px-10">
-            <div className="text-center">
-              <div className="text-xs font-semibold uppercase tracking-[0.32em] text-slate">
-                Community
-              </div>
-              <h2 className="mt-3 text-3xl font-semibold text-ink sm:text-4xl">
-                Follow along and contribute.
-              </h2>
-              <p className="mt-4 text-base leading-7 text-slate">
-                Lux Engine is open for feedback, discussion, and contributions.
-              </p>
-            </div>
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
-              {communityLinks.map((item) => (
-                <a
-                  key={item.title}
-                  href={item.href}
-                  className="group rounded-2xl border border-ink/10 bg-ivory-deep/70 p-6 shadow-[0_24px_60px_-50px_rgba(6,10,18,0.7)] transition hover:-translate-y-1 hover:border-ink/30"
-                >
-                  <div className="text-xs font-semibold uppercase tracking-[0.32em] text-slate">
-                    Resource
-                  </div>
-                  <h3 className="mt-3 text-xl font-semibold text-ink">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-7 text-slate">
-                    {item.description}
-                  </p>
-                  <div className="mt-6 text-xs font-semibold uppercase tracking-[0.32em] text-ink/60 transition group-hover:text-ink">
-                    Visit
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
-
-          <section id="cta" className="mx-auto max-w-6xl px-6 pb-24 lg:px-10">
-            <div className="relative overflow-hidden rounded-3xl bg-ivory-deep px-8 py-12 text-ink shadow-[0_50px_90px_-70px_rgba(6,10,18,0.9)] sm:px-12">
-              <div className="absolute inset-0">
-                <div className="absolute -top-24 left-10 h-48 w-48 rounded-full bg-teal/20 blur-3xl" />
-                <div className="absolute bottom-0 right-0 h-56 w-56 rounded-full bg-slate/30 blur-3xl" />
-                <div className="absolute inset-0 bg-starfield opacity-20" />
-              </div>
-              <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <h2 className="text-3xl font-semibold sm:text-4xl">
-                    Contribute to Lux Engine.
-                  </h2>
-                  <p className="mt-3 max-w-xl text-sm leading-7 text-slate">
-                    Starbounded Studio welcomes contributors, testers, and
-                    collaborators. Follow the repository for updates.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <a
-                    href="https://github.com/starbounded-dev/LuxEngine"
-                    className="inline-flex items-center justify-center rounded-full bg-teal px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-ivory transition hover:bg-teal-bright"
-                  >
-                    Contribute on GitHub
-                  </a>
-                  <a
-                    href="mailto:hello@starbounded.com"
-                    className="inline-flex items-center justify-center rounded-full border border-ink/30 px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-ink transition hover:border-ink/60"
-                  >
-                    Email the studio
-                  </a>
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-
-        <Footer
-          links={[
-            { label: "Overview", href: "#overview" },
-            { label: "Focus", href: "#features" },
-            { label: "Roadmap", href: "#roadmap" },
-            { label: "Get started", href: "#get-started" },
-          ]}
-          socials={[
-            { label: "Email", href: "mailto:hello@starbounded.com" },
-            {
-              label: "GitHub",
-              href: "https://github.com/starbounded-dev/LuxEngine",
-            },
-            {
-              label: "Roadmap",
-              href: "https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h",
-            },
-          ]}
+      <div className="absolute bottom-0 left-4 z-30 flex h-36 w-36 items-center justify-center rounded-lg bg-purple p-3 shadow-tablet sm:left-16">
+        <Image
+          src="/luxengine-logo.png"
+          alt="LuxEngine logo"
+          width={140}
+          height={112}
+          className="h-full w-full object-contain"
+          priority
         />
       </div>
     </div>
   );
 }
 
-function LuxEditorPreview() {
+function ArchitectureTablet() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-ink/15 bg-ivory/80">
-      <div className="flex items-center justify-between border-b border-ink/10 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.32em] text-slate">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-ink/70" />
-          <span className="h-2 w-2 rounded-full bg-ink/40" />
-          <span className="h-2 w-2 rounded-full bg-ink/20" />
+    <div className="rounded-lg border border-line bg-surface p-4 shadow-tablet">
+      <div className="rounded-lg bg-engine p-4 text-white">
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <span className="text-xs font-semibold text-white/60">
+            Asset manager map
+          </span>
+          <span className="rounded-md bg-yellow px-2 py-1 text-xs font-semibold text-ink">
+            editor
+          </span>
         </div>
-        <span>Lux Editor</span>
-        <span className="text-teal">Viewport</span>
-      </div>
-      <div className="relative h-56">
-        <div className="absolute inset-0 bg-grid-fade opacity-45" />
-        <div className="absolute inset-0 bg-gradient-to-br from-teal/20 via-transparent to-transparent" />
-        <div className="absolute left-4 top-4 h-20 w-28 rounded-lg border border-ink/10 bg-ivory-deep/70" />
-        <div className="absolute right-4 top-6 h-12 w-36 rounded-lg border border-ink/10 bg-ivory-deep/70" />
-        <div className="absolute bottom-4 left-8 h-16 w-40 rounded-lg border border-ink/10 bg-ivory-deep/70" />
-        <div className="absolute bottom-4 right-6 h-20 w-28 rounded-lg border border-ink/10 bg-ivory-deep/70" />
-        <div className="relative flex h-full items-center justify-center text-[10px] font-semibold uppercase tracking-[0.32em] text-slate/80">
-          Editor preview (coming soon)
+        <div className="mt-5 grid gap-4">
+          {[
+            ["Project", "owns active AssetManager"],
+            ["EditorAssetManager", "registry plus loaded editor resources"],
+            ["RuntimeAssetManager", "runtime loading boundary"],
+            ["Scene", "asset copied into editable scene state"],
+          ].map(([title, detail]) => (
+            <div
+              key={title}
+              className="grid gap-3 rounded-lg bg-white/10 p-4 sm:grid-cols-[0.5fr_1fr]"
+            >
+              <div className="text-sm font-semibold">{title}</div>
+              <div className="text-sm text-white/70">{detail}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
-  );
-}
-
-function LayersIcon() {
-  return (
-    <svg
-      className="h-5 w-5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      aria-hidden="true"
-    >
-      <path d="M4 7l8-4 8 4-8 4-8-4Z" />
-      <path d="M4 12l8 4 8-4" />
-      <path d="M4 17l8 4 8-4" />
-    </svg>
   );
 }
 
@@ -483,50 +464,10 @@ function SparkIcon() {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.8"
       aria-hidden="true"
     >
       <path d="M12 3l2.2 4.8L19 10l-4.8 2.2L12 17l-2.2-4.8L5 10l4.8-2.2L12 3Z" />
-    </svg>
-  );
-}
-
-function PlatformIcon() {
-  return (
-    <svg
-      className="h-5 w-5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      aria-hidden="true"
-    >
-      <rect x="3" y="4" width="18" height="12" rx="2" />
-      <path d="M8 20h8" />
-      <path d="M12 16v4" />
-    </svg>
-  );
-}
-
-function KernelIcon() {
-  return (
-    <svg
-      className="h-5 w-5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="3" />
-      <path d="M12 2v4" />
-      <path d="M12 18v4" />
-      <path d="M2 12h4" />
-      <path d="M18 12h4" />
-      <path d="M4.9 4.9l2.8 2.8" />
-      <path d="M16.3 16.3l2.8 2.8" />
-      <path d="M19.1 4.9l-2.8 2.8" />
-      <path d="M7.7 16.3l-2.8 2.8" />
     </svg>
   );
 }
@@ -538,7 +479,7 @@ function ViewportIcon() {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.8"
       aria-hidden="true"
     >
       <rect x="3" y="5" width="18" height="14" rx="2" />
@@ -548,54 +489,35 @@ function ViewportIcon() {
   );
 }
 
-function ScriptIcon() {
+function LayersIcon() {
   return (
     <svg
       className="h-5 w-5"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.8"
       aria-hidden="true"
     >
-      <path d="M8 7H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3" />
-      <path d="M16 7h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3" />
-      <path d="M10 12h4" />
+      <path d="M4 7l8-4 8 4-8 4-8-4Z" />
+      <path d="M4 12l8 4 8-4" />
+      <path d="M4 17l8 4 8-4" />
     </svg>
   );
 }
 
-function TerrainIcon() {
+function BookIcon() {
   return (
     <svg
       className="h-5 w-5"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.8"
       aria-hidden="true"
     >
-      <path d="M3 18l5-6 4 4 5-7 4 9" />
-      <path d="M3 18h18" />
-    </svg>
-  );
-}
-
-function AudioIcon() {
-  return (
-    <svg
-      className="h-5 w-5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      aria-hidden="true"
-    >
-      <path d="M5 9v6" />
-      <path d="M9 7v10" />
-      <path d="M13 5v14" />
-      <path d="M17 7v10" />
-      <path d="M21 9v6" />
+      <path d="M5 4h10a4 4 0 0 1 4 4v12H9a4 4 0 0 0-4-4V4Z" />
+      <path d="M5 16V6a2 2 0 0 1 2-2" />
     </svg>
   );
 }

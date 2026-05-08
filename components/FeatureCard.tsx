@@ -1,20 +1,37 @@
 import type { ReactNode } from "react";
 
+type Accent = "purple" | "yellow" | "coral" | "cyan" | "green";
+
 type FeatureCardProps = {
   title: string;
   description: string;
   icon: ReactNode;
+  accent?: Accent;
 };
 
-export function FeatureCard({ title, description, icon }: FeatureCardProps) {
+const accentClasses: Record<Accent, string> = {
+  purple: "bg-purple/10 text-purple",
+  yellow: "bg-yellow/25 text-ink",
+  coral: "bg-coral/10 text-coral",
+  cyan: "bg-cyan/10 text-cyan",
+  green: "bg-green/15 text-green",
+};
+
+export function FeatureCard({
+  title,
+  description,
+  icon,
+  accent = "purple",
+}: FeatureCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-ink/10 bg-ivory-deep/70 p-6 shadow-[0_24px_60px_-48px_rgba(6,10,18,0.7)] backdrop-blur">
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal/80 via-teal-bright/60 to-transparent opacity-0 transition group-hover:opacity-100" />
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-ivory/80 text-ink shadow-[0_0_26px_rgba(53,211,194,0.18)]">
+    <article className="group rounded-lg border border-line bg-surface p-5 shadow-soft transition hover:-translate-y-1 hover:border-purple/30">
+      <div
+        className={`flex h-11 w-11 items-center justify-center rounded-lg ${accentClasses[accent]}`}
+      >
         {icon}
       </div>
       <h3 className="mt-5 text-xl font-semibold text-ink">{title}</h3>
-      <p className="mt-2 text-sm leading-7 text-slate">{description}</p>
-    </div>
+      <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
+    </article>
   );
 }

@@ -46,8 +46,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeScript = `
+    try {
+      const stored = localStorage.getItem("starbounded-theme");
+      const theme = stored === "light" || stored === "dark"
+        ? stored
+        : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    } catch {
+      document.documentElement.dataset.theme = "dark";
+      document.documentElement.style.colorScheme = "dark";
+    }
+  `;
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
         className={`${spaceGrotesk.variable} ${plexSans.variable} antialiased`}
       >

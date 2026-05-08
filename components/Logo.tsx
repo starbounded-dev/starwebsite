@@ -4,25 +4,31 @@ type LogoProps = {
 
 export function Logo({ tone = "dark" }: LogoProps) {
   const badgeTone =
-    tone === "dark" ? "bg-ivory text-ink" : "bg-ink text-ivory";
-  const textTone = tone === "dark" ? "text-ink" : "text-ivory";
+    tone === "dark"
+      ? "border-ink/10 bg-surface text-purple"
+      : "border-white/20 bg-white text-purple";
+  const textTone = tone === "dark" ? "text-ink" : "text-white";
+  const subTone = tone === "dark" ? "text-muted" : "text-white/70";
 
   return (
     <div className={`flex items-center gap-3 ${textTone}`}>
       <span
-        className={`flex h-9 w-9 items-center justify-center rounded-full ${badgeTone} shadow-[0_18px_40px_-22px_rgba(11,16,25,0.9)]`}
+        className={`flex h-10 w-10 items-center justify-center rounded-lg border ${badgeTone} shadow-soft`}
       >
         <svg
-          className="h-4 w-4"
+          className="h-5 w-5"
           viewBox="0 0 24 24"
           fill="currentColor"
           aria-hidden="true"
         >
-          <path d="M12 2l2.6 5.8 6.3.6-4.8 4.1 1.4 6.3L12 16.6 6.5 18.8 8 12.5 3.2 8.4l6.3-.6L12 2z" />
+          <path d="M12 2.4l2.42 6.02 6.46.46-4.96 4.08 1.56 6.3L12 15.82l-5.48 3.44 1.56-6.3-4.96-4.08 6.46-.46L12 2.4Z" />
         </svg>
       </span>
-      <span className="text-lg font-semibold tracking-tight">
-        Starbounded Studio
+      <span className="leading-none">
+        <span className="block text-base font-semibold">Starbounded</span>
+        <span className={`block text-[11px] font-semibold uppercase ${subTone}`}>
+          Studio
+        </span>
       </span>
     </div>
   );
