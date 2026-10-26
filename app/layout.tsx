@@ -19,25 +19,33 @@ const plexSans = IBM_Plex_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL("https://starbounded.com"),
   title: {
-    default: "Starbounded Studio",
+    default: "Starbounded Studio — Small studio. Big workbench.",
     template: "%s | Starbounded Studio",
   },
   description:
-    "Starbounded Studio builds open-source software for interactive worlds, including the Lux Engine game engine.",
+    "An independent studio in Canada, building the LuxEngine game engine and sharing the work as we go.",
   openGraph: {
     title: "Starbounded Studio",
     description:
-      "Open-source software studio building the Lux Engine game engine and companion tools.",
+      "An independent studio in Canada, building LuxEngine and sharing the work as we go.",
     url: "https://starbounded.com",
     siteName: "Starbounded Studio",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/images/lux-editor-sponza.webp",
+        width: 3839,
+        height: 2088,
+        alt: "Sponza running in the LuxEngine editor",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Starbounded Studio",
     description:
-      "Open-source software studio building the Lux Engine game engine and companion tools.",
+      "An independent studio in Canada, building LuxEngine and sharing the work as we go.",
   },
 };
 
@@ -49,14 +57,12 @@ export default function RootLayout({
   const themeScript = `
     try {
       const stored = localStorage.getItem("starbounded-theme");
-      const theme = stored === "light" || stored === "dark"
-        ? stored
-        : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      const theme = stored === "light" || stored === "dark" ? stored : "light";
       document.documentElement.dataset.theme = theme;
       document.documentElement.style.colorScheme = theme;
     } catch {
-      document.documentElement.dataset.theme = "dark";
-      document.documentElement.style.colorScheme = "dark";
+      document.documentElement.dataset.theme = "light";
+      document.documentElement.style.colorScheme = "light";
     }
   `;
 

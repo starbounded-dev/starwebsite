@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Starbounded Studio
 
-## Getting Started
+The Starbounded website, built in Next.js with its own studio-workbench identity: a violet and silver palette drawn from the LuxEngine logo, clear sans-serif type, and real editor screenshots.
 
-First, run the development server:
+## Run locally
 
-```bash
+```sh
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The studio homepage is at `/`; the LuxEngine page is at `/lux`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Validate
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+npx tsc --noEmit
+npm run build
+```
 
-## Learn More
+In Windows environments where Turbopack cannot create worker processes, use `npm run dev -- --webpack` and `npm run build -- --webpack`.
 
-To learn more about Next.js, take a look at the following resources:
+## Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Responsive studio and engine pages, including mobile navigation.
+- Persistent dark and light themes, with a light default.
+- Expandable roadmap details and keyboard-accessible setup tabs.
+- Copyable setup commands with a selection fallback when clipboard access is unavailable.
+- Three real LuxEngine screenshots with keyboard-accessible view selection and a full-size viewer supporting Escape to close.
+- Locally optimized screenshots; no analytics or added external runtime services.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Screenshots
 
-## Deploy on Vercel
+The website uses three screenshots provided by the project owner, captured in the LuxEngine editor. The original PNGs are preserved in docs/source-images/. The WebP files preserve the full screenshots without visual changes or cropping. The hero version is resized proportionally.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Image                | Website asset                          | Original resolution |
+| -------------------- | -------------------------------------- | ------------------- |
+| Sponza in the editor | public/images/lux-editor-sponza.webp   | 3839 x 2088         |
+| Rendering test scene | public/images/lux-render-features.webp | 3839 x 2088         |
+| Material editor      | public/images/lux-material-editor.webp | 3839 x 2088         |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The home-page workbench uses public/images/lux-hero.webp (2560 x 1392). The screenshot is shown in full, without overlaid text or cropping. The gallery and full-size viewer also show the complete captures.
+
+The previous generated landscape is no longer used on the website or in social previews. The LuxEngine logo is the existing project asset.

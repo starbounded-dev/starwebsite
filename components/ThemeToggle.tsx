@@ -1,92 +1,49 @@
 "use client";
-
-import { useEffect, useState } from "react";
-
-type Theme = "light" | "dark";
-
-const storageKey = "starbounded-theme";
-
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") {
-    return "dark";
-  }
-
-  const saved = window.localStorage.getItem(storageKey);
-  if (saved === "light" || saved === "dark") {
-    return saved;
-  }
-
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
-function applyTheme(theme: Theme) {
-  document.documentElement.dataset.theme = theme;
-  document.documentElement.style.colorScheme = theme;
-}
-
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
-
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
-
-  const nextTheme = theme === "dark" ? "light" : "dark";
-
+  function toggle() {
+    const next =
+      document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    document.documentElement.dataset.theme = next;
+    document.documentElement.style.colorScheme = next;
+    try {
+      localStorage.setItem("starbounded-theme", next);
+    } catch {
+      /* Theme still works without storage. */
+    }
+  }
   return (
     <button
+      className="theme-toggle"
       type="button"
-      aria-label={`Switch to ${nextTheme} mode`}
-      title={`Switch to ${nextTheme} mode`}
-      suppressHydrationWarning
-      onClick={() => {
-        setTheme(nextTheme);
-        window.localStorage.setItem(storageKey, nextTheme);
-        applyTheme(nextTheme);
-      }}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-surface text-ink shadow-soft transition hover:border-purple/35 hover:text-purple"
+      onClick={toggle}
+      aria-label="Toggle light and dark theme"
+      title="Toggle light and dark theme"
     >
-      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+      <svg
+        className="sun-icon"
+        width="19"
+        height="19"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2" />
+      </svg>
+      <svg
+        className="moon-icon"
+        width="19"
+        height="19"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        aria-hidden="true"
+      >
+        <path d="M20.8 13A9 9 0 0 1 11 3a9 9 0 1 0 9.8 10Z" />
+      </svg>
     </button>
-  );
-}
-
-function SunIcon() {
-  return (
-    <svg
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="M4.93 4.93l1.41 1.41" />
-      <path d="M17.66 17.66l1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="M4.93 19.07l1.41-1.41" />
-      <path d="M17.66 6.34l1.41-1.41" />
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <path d="M21 13.2A8.4 8.4 0 1 1 10.8 3a6.7 6.7 0 0 0 10.2 10.2Z" />
-    </svg>
   );
 }

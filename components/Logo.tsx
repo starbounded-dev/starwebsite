@@ -1,35 +1,11 @@
-type LogoProps = {
-  tone?: "dark" | "light";
-};
-
-export function Logo({ tone = "dark" }: LogoProps) {
-  const badgeTone =
-    tone === "dark"
-      ? "border-ink/10 bg-surface text-purple"
-      : "border-white/20 bg-white text-purple";
-  const textTone = tone === "dark" ? "text-ink" : "text-white";
-  const subTone = tone === "dark" ? "text-muted" : "text-white/70";
-
+import Image from "next/image";
+export function Logo() {
   return (
-    <div className={`flex items-center gap-3 ${textTone}`}>
-      <span
-        className={`flex h-10 w-10 items-center justify-center rounded-lg border ${badgeTone} shadow-soft`}
-      >
-        <svg
-          className="h-5 w-5"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path d="M12 2.4l2.42 6.02 6.46.46-4.96 4.08 1.56 6.3L12 15.82l-5.48 3.44 1.56-6.3-4.96-4.08 6.46-.46L12 2.4Z" />
-        </svg>
+    <span className="brand">
+      <Image className="brand-logo" src="/luxengine-logo.png" alt="LuxEngine logo" width={42} height={48} />
+      <span>
+        starbounded<span className="brand-studio">STUDIO</span>
       </span>
-      <span className="leading-none">
-        <span className="block text-base font-semibold">Starbounded</span>
-        <span className={`block text-[11px] font-semibold uppercase ${subTone}`}>
-          Studio
-        </span>
-      </span>
-    </div>
+    </span>
   );
 }
