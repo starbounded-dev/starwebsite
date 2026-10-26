@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
   async redirects() {
     return [
-      { source: "/docs", destination: "/docs/", permanent: true },
-      { source: "/docs/index.html", destination: "/docs/", permanent: true },
+      // Match only the slashless URL; /docs/ must reach the index rewrite.
+      { source: "/docs((?!/)$)", destination: "/docs/", permanent: true },
     ];
   },
   async rewrites() {

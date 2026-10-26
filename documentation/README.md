@@ -28,6 +28,6 @@ The strict build checks navigation, local links, and heading anchors. Add each n
 
 The docs are published at https://www.starbounded.com/docs/ with the existing Next.js website. `npm run docs:build` writes static files to `public/docs/`; the main `dev` and `build` commands run it automatically. Generated files are ignored by Git.
 
-The root `vercel.json` installs the pinned Python requirements before the normal Next.js build. The strict MkDocs check runs as part of every website deployment, so broken documentation links fail the build. No separate hosting project, DNS record, or credentials are needed.
+The root `vercel.json` creates an isolated Python environment and installs the pinned requirements before the normal Next.js build. The strict MkDocs check runs as part of every website deployment, so broken documentation links fail the build. No separate hosting project, DNS record, or credentials are needed.
 
 MkDocs uses flat `.html` page URLs so navigation, search, and assets work within `/docs/`. Next.js redirects `/docs` to `/docs/` and serves the generated index there. The docs theme is independent of the marketing site's CSS and includes its own light/dark toggle.
