@@ -21,6 +21,7 @@ export function Footer() {
           <div>
             <Link href="/#studio">Studio</Link>
             <Link href="/lux">LuxEngine</Link>
+            <a href="/docs/">Docs</a>
             <Link href="/#roadmap">Forward</Link>
             <Link href="/#get-started">Get started</Link>
           </div>

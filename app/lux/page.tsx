@@ -140,7 +140,7 @@ export default function LuxPage() {
               </div>
               <a
                 className="text-link"
-                href="https://github.com/starbounded-dev/LuxEngine#readme"
+                href="/docs/getting-started.html"
               >
                 Full setup instructions <Arrow diagonal />
               </a>

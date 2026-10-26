@@ -4,21 +4,21 @@ const steps = [
   {
     title: "Clone the source",
     description:
-      "Bring the engine and its third-party submodules to your machine.",
+      "Clone the current dev branch, then change into the LuxEngine folder.",
     command:
-      "git clone --recursive https://github.com/starbounded-dev/LuxEngine",
+      "git clone --branch dev --recursive https://github.com/starbounded-dev/LuxEngine.git",
   },
   {
     title: "Set up dependencies",
     description:
-      "Check prerequisites and install the required Vulkan SDK components.",
-    command: "scripts/Setup.bat",
+      "From the LuxEngine folder, check prerequisites and generate the solution. The docs cover the required SDKs.",
+    command: ".\\scripts\\Setup.bat",
   },
   {
-    title: "Generate the solution",
+    title: "Build the editor",
     description:
-      "Generate the Visual Studio solution, then open it to start exploring.",
-    command: "scripts/Win-GenProjects.bat",
+      "In a Visual Studio Developer terminal, build Release, then set Editor as the startup project in Lux.sln.",
+    command: 'MSBuild Lux.sln /restore /m /p:Configuration=Release /p:Platform="Mixed Platforms"',
   },
 ];
 export function SetupGuide() {

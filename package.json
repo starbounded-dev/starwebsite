@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm run docs:build",
     "dev": "next dev",
+    "prebuild": "npm run docs:build",
     "build": "next build",
+    "docs:build": "node scripts/docs.mjs build",
+    "docs:serve": "node scripts/docs.mjs serve",
     "start": "next start",
     "lint": "eslint"
   },

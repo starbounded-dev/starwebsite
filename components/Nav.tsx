@@ -8,6 +8,7 @@ import { Arrow } from "./Icons";
 const links = [
   { label: "Studio", href: "/#studio" },
   { label: "LuxEngine", href: "/lux" },
+  { label: "Docs", href: "/docs/" },
   { label: "Forward", href: "/#roadmap" },
   { label: "Get started", href: "/#get-started" },
 ];
@@ -42,7 +43,9 @@ export function Nav({ engine = false }: { engine?: boolean }) {
             <Logo />
           </Link>
           <div className="desktop-nav">
-            {links.map((link) => (
+            {links.map((link) => link.href === "/docs/" ? (
+              <a key={link.href} href={link.href}>{link.label}</a>
+            ) : (
               <Link
                 key={link.href}
                 href={link.href}
@@ -74,7 +77,12 @@ export function Nav({ engine = false }: { engine?: boolean }) {
         </nav>
         {open ? (
           <div className="mobile-menu" id="mobile-menu">
-            {links.map((link) => (
+            {links.map((link) => link.href === "/docs/" ? (
+              <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
+                {link.label}
+                <Arrow />
+              </a>
+            ) : (
               <Link
                 onClick={() => setOpen(false)}
                 key={link.href}

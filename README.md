@@ -4,12 +4,18 @@ The Starbounded website, built in Next.js with its own studio-workbench identity
 
 ## Run locally
 
-```sh
+Install Node.js and Python 3.11 or newer, then run these commands in PowerShell:
+
+```powershell
 npm install
+python -m venv .venv-docs
+.\.venv-docs\Scripts\python -m pip install -r documentation/requirements.txt
 npm run dev
 ```
 
-Open http://localhost:3000. The studio homepage is at `/`; the LuxEngine page is at `/lux`.
+Open http://localhost:3000. The studio homepage is at `/`, the LuxEngine page is at `/lux`, and documentation is at `/docs/`.
+
+On macOS or Linux, use `.venv-docs/bin/python` when installing the Python requirements.
 
 ## Validate
 
@@ -28,6 +34,13 @@ In Windows environments where Turbopack cannot create worker processes, use `npm
 - Copyable setup commands with a selection fallback when clipboard access is unavailable.
 - Three real LuxEngine screenshots with keyboard-accessible view selection and a full-size viewer supporting Escape to close.
 - Locally optimized screenshots; no analytics or added external runtime services.
+- MkDocs documentation with search, a light/dark theme, and guides for the public LuxEngine `dev` branch.
+
+## Documentation
+
+Edit Markdown pages in `documentation/docs/` and navigation in `documentation/mkdocs.yml`. Run `npm run docs:serve` for an auto-reloading docs preview, or `npm run docs:build` for a strict link-checked build. The website's normal development and production builds generate docs into `public/docs/` automatically.
+
+The [documentation maintainer guide](documentation/README.md) explains the setup and hosting. Vercel installs the Python dependencies before building the website; the docs publish with that same deployment at https://www.starbounded.com/docs/.
 
 ## Screenshots
 

@@ -232,7 +232,7 @@ export default function Home() {
                 <span>Vulkan SDK</span>
               </div>
               <a
-                href="https://github.com/starbounded-dev/LuxEngine#readme"
+                href="/docs/getting-started.html"
                 className="text-link"
               >
                 Read the setup guide <Arrow diagonal />

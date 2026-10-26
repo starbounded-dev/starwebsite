@@ -1,0 +1,83 @@
+site_name: LuxEngine Docs
+site_description: Build LuxEngine from source, find your way around the editor, and contribute to the engine.
+site_url: https://www.starbounded.com/docs/
+repo_url: https://github.com/starbounded-dev/LuxEngine/tree/dev
+repo_name: LuxEngine / dev
+edit_uri: https://github.com/starbounded-dev/starwebsite/edit/dev/documentation/docs/
+docs_dir: docs
+site_dir: site
+use_directory_urls: false
+copyright: Starbounded Studio · Building in the open
+
+theme:
+  name: material
+  language: en
+  font: false
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - search.suggest
+    - content.action.edit
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: custom
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: custom
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+nav:
+  - Welcome: index.md
+  - Start here:
+      - Build from source: getting-started.md
+      - Troubleshooting: troubleshooting.md
+  - Using LuxEngine:
+      - Find your way around: editor.md
+      - Rendering & materials: rendering.md
+  - Contributing: contributing.md
+  - Starbounded Studio ↗: https://www.starbounded.com/
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+  links:
+    not_found: warn
+    anchors: warn
+    unrecognized_links: warn
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/starbounded-dev/LuxEngine/tree/dev
+      name: LuxEngine source
+    - icon: material/web
+      link: https://www.starbounded.com/
+      name: Starbounded Studio
