@@ -71,7 +71,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
+      {/* Browser extensions can add attributes before React hydrates this element. */}
       <body
+        suppressHydrationWarning
         className={`${spaceGrotesk.variable} ${plexSans.variable} antialiased`}
       >
         {children}
