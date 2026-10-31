@@ -1,8 +1,44 @@
 "use client";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+
+const themeEvent = "starbounded-theme-change";
+
+function subscribe(onChange: () => void) {
+  window.addEventListener(themeEvent, onChange);
+  const onStorage = (event: StorageEvent) => {
+    if (event.key !== "starbounded-theme" && event.key !== null) return;
+    const theme = event.newValue === "dark" ? "dark" : "light";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    onChange();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => {
+    window.removeEventListener(themeEvent, onChange);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
+const getTheme = () => document.documentElement.dataset.theme === "dark";
+const getServerTheme = () => false;
+
 export function ThemeToggle() {
+  const dark = useSyncExternalStore(subscribe, getTheme, getServerTheme);
+  const transitionFrame = useRef<number>(0);
+
+  useEffect(
+    () => () => {
+      cancelAnimationFrame(transitionFrame.current);
+      delete document.documentElement.dataset.themeSwitching;
+    },
+    [],
+  );
+
   function toggle() {
     const next =
       document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    cancelAnimationFrame(transitionFrame.current);
+    document.documentElement.dataset.themeSwitching = "true";
     document.documentElement.dataset.theme = next;
     document.documentElement.style.colorScheme = next;
     try {
@@ -10,14 +46,21 @@ export function ThemeToggle() {
     } catch {
       /* Theme still works without storage. */
     }
+    window.dispatchEvent(new Event(themeEvent));
+    transitionFrame.current = requestAnimationFrame(() => {
+      transitionFrame.current = requestAnimationFrame(() => {
+        delete document.documentElement.dataset.themeSwitching;
+      });
+    });
   }
   return (
     <button
-      className="theme-toggle"
+      className="touch-target grid size-[35px] place-items-center rounded-[6px] border-0 text-muted transition-[color,background-color,transform] duration-150 hover:bg-tint hover:text-accent active:scale-[0.97] max-[760px]:w-[31px]"
       type="button"
       onClick={toggle}
-      aria-label="Toggle light and dark theme"
-      title="Toggle light and dark theme"
+      aria-label="Dark theme"
+      aria-pressed={dark}
+      title={dark ? "Switch to light theme" : "Switch to dark theme"}
     >
       <svg
         className="sun-icon"

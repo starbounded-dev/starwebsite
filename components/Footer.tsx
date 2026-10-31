@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
 import { Arrow } from "./Icons";
+import { navigationLinks, type NavigationLink } from "@/lib/navigation";
 export function Footer() {
   return (
     <footer className="site-footer">
@@ -19,11 +20,17 @@ export function Footer() {
         </div>
         <div className="footer-links">
           <div>
-            <Link href="/#studio">Studio</Link>
-            <Link href="/lux">LuxEngine</Link>
-            <a href="/docs/">Docs</a>
-            <Link href="/#roadmap">Forward</Link>
-            <Link href="/#get-started">Get started</Link>
+            {navigationLinks.map((link: NavigationLink) =>
+              link.document ? (
+                <a key={link.href} href={link.href}>
+                  {link.label}
+                </a>
+              ) : (
+                <Link key={link.href} href={link.href}>
+                  {link.label}
+                </Link>
+              ),
+            )}
           </div>
           <a href="#main-content">Back to top ↑</a>
         </div>

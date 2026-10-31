@@ -21,6 +21,8 @@ On macOS or Linux, use `.venv-docs/bin/python` when installing the Python requir
 
 ```sh
 npx tsc --noEmit
+npm run lint
+npm test
 npm run build
 ```
 
@@ -35,6 +37,18 @@ In Windows environments where Turbopack cannot create worker processes, use `npm
 - Three real LuxEngine screenshots with keyboard-accessible view selection and a full-size viewer supporting Escape to close.
 - Locally optimized screenshots; no analytics or added external runtime services.
 - MkDocs documentation with search, a light/dark theme, and guides for the public LuxEngine `dev` branch.
+
+## Frontend structure
+
+The pages, shared header/footer, and roadmap content remain Server Components. Client components handle tabs, the mobile navigation, clipboard actions, the screenshot dialog, and theme state.
+
+`components/ui/` contains shadcn-style Radix primitives, adapted to the existing studio design rather than a preset theme. Tabs provide roving focus and arrow/Home/End keys. The dialog traps focus and restores it to the control that opened it. The mobile popover handles Escape, outside clicks, and dismissal when returning to the desktop layout.
+
+Tailwind v4 maps the original light/dark color and font variables to utilities. Base styles and the remaining identity-specific CSS use cascade layers so utility overrides work predictably. Setup controls use utilities with the original dimensions and breakpoints.
+
+`InteractionProvider` loads Motion's layout features in a separate chunk and respects the operating system's reduced-motion setting. Shared tab indicators move between selected controls; panels, disclosures, and overlays use short CSS transitions. List entrances run once per tab session and keep the content available without JavaScript. No route transition delays navigation.
+
+`npm test` runs DOM interaction tests for keyboard navigation, independent component instances, clipboard success/failure and late completion, dialog focus, mobile dismissal, and theme synchronization. These tests do not measure rendered layout or animation frame rate.
 
 ## Documentation
 

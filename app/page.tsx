@@ -6,6 +6,7 @@ import { Arrow } from "@/components/Icons";
 import { ScenePreview } from "@/components/ScenePreview";
 import { Roadmap } from "@/components/Roadmap";
 import { SetupGuide } from "@/components/SetupGuide";
+import { Stagger } from "@/components/Stagger";
 
 export default function Home() {
   return (
@@ -151,7 +152,7 @@ export default function Home() {
               </p>
             </div>
             <ScenePreview />
-            <div className="tool-notes">
+            <Stagger className="tool-notes">
               <article>
                 <span className="tool-symbol" aria-hidden="true">
                   ⌘
@@ -182,7 +183,7 @@ export default function Home() {
                   problem to solve.
                 </p>
               </article>
-            </div>
+            </Stagger>
             <div className="engine-link-row">
               <span className="work-status">
                 <i className="status-dot" /> Early development. Plenty to
@@ -231,10 +232,7 @@ export default function Home() {
                 <span>Visual Studio 2022</span>
                 <span>Vulkan SDK</span>
               </div>
-              <a
-                href="/docs/getting-started.html"
-                className="text-link"
-              >
+              <a href="/docs/getting-started.html" className="text-link">
                 Read the setup guide <Arrow diagonal />
               </a>
             </div>

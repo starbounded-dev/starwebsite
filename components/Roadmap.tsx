@@ -1,3 +1,10 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
+
 const milestones = [
   {
     number: "01",
@@ -38,37 +45,43 @@ const milestones = [
 ];
 export function Roadmap() {
   return (
-    <div className="roadmap-grid">
+    <Accordion type="multiple" className="roadmap-grid" aria-label="Work ahead">
       {milestones.map((item, index) => (
-        <article key={item.number}>
-          <div className="roadmap-stage">
-            <span className="roadmap-step mono">{item.number}</span>
-            <span
-              className={`roadmap-status mono ${index === 0 ? "current" : ""}`}
-            >
-              {index === 0 ? (
-                <i className="status-dot" aria-hidden="true" />
-              ) : null}
-              {item.status}
-            </span>
-          </div>
-          <div className="roadmap-body">
-            <span className="mono muted">{item.phase}</span>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-            <details>
-              <summary>
-                Work in this area <span aria-hidden="true">+</span>
-              </summary>
-              <ul>
-                {item.items.map((text) => (
-                  <li key={text}>{text}</li>
-                ))}
-              </ul>
-            </details>
-          </div>
-        </article>
+        <AccordionItem value={item.number} key={item.number} asChild>
+          <article>
+            <div className="roadmap-stage">
+              <span className="roadmap-step mono">{item.number}</span>
+              <span
+                className={`roadmap-status mono ${index === 0 ? "current" : ""}`}
+              >
+                {index === 0 ? (
+                  <i className="status-dot" aria-hidden="true" />
+                ) : null}
+                {item.status}
+              </span>
+            </div>
+            <div className="roadmap-body">
+              <span className="mono muted">{item.phase}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+              <div className="mt-[20px] text-[12px]">
+                <AccordionTrigger
+                  aria-label={`Work in this area: ${item.title}`}
+                >
+                  Work in this area
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="m-0 pl-[16px] leading-[1.9] text-muted">
+                    {item.items.map((text) => (
+                      <li key={text}>{text}</li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </div>
+            </div>
+          </article>
+        </AccordionItem>
       ))}
-    </div>
+    </Accordion>
   );
 }

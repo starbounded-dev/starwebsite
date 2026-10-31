@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { InteractionProvider } from "@/components/InteractionProvider";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -56,6 +57,12 @@ export default function RootLayout({
 }>) {
   const themeScript = `
     try {
+      if (!sessionStorage.getItem("starbounded-entry-seen")) {
+        document.documentElement.dataset.entry = "ready";
+        sessionStorage.setItem("starbounded-entry-seen", "true");
+      }
+    } catch { /* Entry animation is optional when storage is unavailable. */ }
+    try {
       const stored = localStorage.getItem("starbounded-theme");
       const theme = stored === "light" || stored === "dark" ? stored : "light";
       document.documentElement.dataset.theme = theme;
@@ -76,7 +83,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${spaceGrotesk.variable} ${plexSans.variable} antialiased`}
       >
-        {children}
+        <InteractionProvider>{children}</InteractionProvider>
       </body>
     </html>
   );

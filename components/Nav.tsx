@@ -1,21 +1,11 @@
-"use client";
 import Link from "next/link";
-import { useRef, useState } from "react";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { Arrow } from "./Icons";
-
-const links = [
-  { label: "Studio", href: "/#studio" },
-  { label: "LuxEngine", href: "/lux" },
-  { label: "Docs", href: "/docs/" },
-  { label: "Forward", href: "/#roadmap" },
-  { label: "Get started", href: "/#get-started" },
-];
+import { MobileNav } from "./MobileNav";
+import { navigationLinks, type NavigationLink } from "@/lib/navigation";
 
 export function Nav({ engine = false }: { engine?: boolean }) {
-  const [open, setOpen] = useState(false);
-  const menuButton = useRef<HTMLButtonElement>(null);
   const sourceUrl = engine
     ? "https://github.com/starbounded-dev/LuxEngine"
     : "https://github.com/starbounded-dev";
@@ -24,82 +14,52 @@ export function Nav({ engine = false }: { engine?: boolean }) {
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <header
-        className="site-header"
-        onKeyDown={(event) => {
-          if (event.key === "Escape" && open) {
-            setOpen(false);
-            menuButton.current?.focus();
-          }
-        }}
-      >
-        <nav className="wrap nav-inner" aria-label="Main navigation">
+      <header className="relative z-30">
+        <nav
+          className="wrap flex min-h-[100px] items-center justify-between gap-[24px] border-b border-line max-[760px]:min-h-[82px] max-[760px]:gap-[15px]"
+          aria-label="Main navigation"
+        >
           <Link
             className="brand-link"
             aria-label="Starbounded Studio home"
             href="/"
-            onClick={() => setOpen(false)}
           >
             <Logo />
           </Link>
-          <div className="desktop-nav">
-            {links.map((link) => link.href === "/docs/" ? (
-              <a key={link.href} href={link.href}>{link.label}</a>
-            ) : (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={
-                  engine && link.href === "/lux" ? "page" : undefined
-                }
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="desktop-nav flex items-center gap-[5px] max-[1000px]:hidden">
+            {navigationLinks.map((link: NavigationLink) =>
+              link.document ? (
+                <a key={link.href} href={link.href}>
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={
+                    engine && link.href === "/lux" ? "page" : undefined
+                  }
+                >
+                  {link.label}
+                </Link>
+              ),
+            )}
           </div>
-          <div className="nav-actions">
+          <div className="flex items-center gap-[14px] max-[1100px]:gap-[8px] max-[760px]:gap-[5px]">
             <ThemeToggle />
-            <a className="nav-github" href={sourceUrl}>
+            <a
+              className="nav-github flex items-center gap-[20px] rounded-[7px] bg-ink px-[13px] py-[9px] text-[12px] text-paper transition-[opacity,transform] duration-150 hover:opacity-90 active:scale-[0.98] max-[760px]:gap-[9px] max-[760px]:px-[10px] max-[760px]:py-[8px] max-[760px]:text-[11px] max-[380px]:hidden [&_svg]:size-[16px]"
+              href={sourceUrl}
+            >
               Source <Arrow diagonal />
             </a>
-            <button
-              ref={menuButton}
-              type="button"
-              className="menu-button"
-              aria-expanded={open}
-              aria-controls="mobile-menu"
-              aria-label={open ? "Close navigation" : "Open navigation"}
-              onClick={() => setOpen((value) => !value)}
-            >
-              {open ? <span>✕</span> : <span>☰</span>}
-            </button>
+            <MobileNav
+              links={navigationLinks}
+              sourceUrl={sourceUrl}
+              engine={engine}
+            />
           </div>
         </nav>
-        {open ? (
-          <div className="mobile-menu" id="mobile-menu">
-            {links.map((link) => link.href === "/docs/" ? (
-              <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
-                {link.label}
-                <Arrow />
-              </a>
-            ) : (
-              <Link
-                onClick={() => setOpen(false)}
-                key={link.href}
-                href={link.href}
-                aria-current={
-                  engine && link.href === "/lux" ? "page" : undefined
-                }
-              >
-                {link.label}
-                <Arrow />
-              </Link>
-            ))}
-            <a href={sourceUrl} onClick={() => setOpen(false)}>
-              Source <Arrow diagonal />
-            </a>
-          </div>
-        ) : null}
       </header>
     </>
   );

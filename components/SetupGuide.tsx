@@ -1,7 +1,19 @@
 "use client";
-import { useRef, useState } from "react";
+
+import { LayoutGroup } from "motion/react";
+import { useId, useState } from "react";
+import { CopyCommand } from "./CopyCommand";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  TabHighlight,
+} from "./ui/tabs";
+
 const steps = [
   {
+    id: "clone",
     title: "Clone the source",
     description:
       "Clone the current dev branch, then change into the LuxEngine folder.",
@@ -9,114 +21,87 @@ const steps = [
       "git clone --branch dev --recursive https://github.com/starbounded-dev/LuxEngine.git",
   },
   {
+    id: "setup",
     title: "Set up dependencies",
     description:
       "From the LuxEngine folder, check prerequisites and generate the solution. The docs cover the required SDKs.",
     command: ".\\scripts\\Setup.bat",
   },
   {
+    id: "build",
     title: "Build the editor",
     description:
       "In a Visual Studio Developer terminal, build Release, then set Editor as the startup project in Lux.sln.",
-    command: 'MSBuild Lux.sln /restore /m /p:Configuration=Release /p:Platform="Mixed Platforms"',
+    command:
+      'MSBuild Lux.sln /restore /m /p:Configuration=Release /p:Platform="Mixed Platforms"',
   },
-];
+] as const;
+
 export function SetupGuide() {
-  const [active, setActive] = useState(0);
-  const [message, setMessage] = useState("");
-  const codeRef = useRef<HTMLElement>(null);
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(steps[active].command);
-      setMessage("Copied to clipboard");
-    } catch {
-      if (codeRef.current) {
-        const range = document.createRange();
-        range.selectNodeContents(codeRef.current);
-        const selection = window.getSelection();
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-      }
-      setMessage("Command selected. Press Ctrl+C to copy.");
-    }
-  }
+  const id = useId();
+  const [active, setActive] = useState<string>(steps[0].id);
   return (
-    <div className="setup-guide">
-      <div
-        className="setup-tabs"
-        role="tablist"
-        aria-label="Installation steps"
+    <LayoutGroup id={id}>
+      <Tabs
+        value={active}
+        onValueChange={setActive}
+        className="min-w-0 overflow-hidden rounded-[12px] border border-line bg-paper"
       >
-        {steps.map((step, index) => (
-          <button
-            id={`setup-tab-${index}`}
-            aria-controls="setup-panel"
-            role="tab"
-            aria-selected={active === index}
-            tabIndex={active === index ? 0 : -1}
-            key={step.title}
-            onClick={() => {
-              setActive(index);
-              setMessage("");
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
-                event.preventDefault();
-                const next =
-                  (active + (event.key === "ArrowRight" ? 1 : 2)) % 3;
-                setActive(next);
-                setMessage("");
-                document.getElementById(`setup-tab-${next}`)?.focus();
-              }
-            }}
-          >
-            <span className="mono">0{index + 1}</span>
-            {step.title}
-          </button>
-        ))}
-      </div>
-      <div
-        className="setup-panel"
-        id="setup-panel"
-        role="tabpanel"
-        aria-labelledby={`setup-tab-${active}`}
-      >
-        <div className="terminal-top mono">
-          <span>
-            <i /> <i /> <i />
-          </span>
-          WINDOWS / TERMINAL
-        </div>
-        <h3>{steps[active].title}</h3>
-        <p>{steps[active].description}</p>
-        <div className="command">
-          <span aria-hidden="true">$</span>
-          <code ref={codeRef}>{steps[active].command}</code>
-          <button
-            aria-label="Copy command"
-            title="Copy command"
-            type="button"
-            onClick={copy}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              aria-hidden="true"
+        <TabsList
+          aria-label="Installation steps"
+          className="grid grid-cols-3 border-b border-line"
+        >
+          {steps.map((step, index) => (
+            <TabsTrigger
+              key={step.id}
+              value={step.id}
+              className="border-0 border-r border-line px-[14px] py-[18px] text-left text-[11px] leading-[1.5] text-muted last:border-r-0 hover:text-accent focus-visible:outline-offset-[-4px] data-[state=active]:text-accent max-[760px]:px-[10px] max-[760px]:py-[14px] max-[760px]:text-[10px]"
             >
-              <rect x="8" y="8" width="12" height="13" rx="1" />
-              <path d="M16 8V3H3v13h5" />
-            </svg>
-          </button>
-        </div>
-        <div className="setup-note mono" aria-live="polite">
-          {message ||
-            `STEP ${active + 1} OF 3 · SOURCE ACCESS, NO PREBUILT DOWNLOAD`}
-        </div>
-      </div>
-    </div>
+              {active === step.id ? (
+                <TabHighlight
+                  layoutId="setup-selection"
+                  className="after:absolute after:inset-x-0 after:bottom-[-1px] after:h-[2px] after:bg-accent"
+                />
+              ) : null}
+              <span className="mono mb-[8px] block text-[10px]">
+                0{index + 1}
+              </span>
+              {step.title}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {steps.map((step, index) => (
+          <TabsContent
+            key={step.id}
+            value={step.id}
+            className="p-[27px] max-[760px]:px-[18px] max-[760px]:py-[23px]"
+          >
+            <div>
+              <div className="mono mb-[27px] flex items-center justify-between gap-[15px] text-[9px] text-muted">
+                <span aria-hidden="true" className="flex gap-[5px]">
+                  {[0, 1, 2].map((dot) => (
+                    <i
+                      key={dot}
+                      className="block size-[5px] rounded-full bg-line"
+                    />
+                  ))}
+                </span>
+                WINDOWS / TERMINAL
+              </div>
+              <h3 className="mb-[14px] text-[23px] font-medium">
+                {step.title}
+              </h3>
+              <p className="mb-[25px] min-h-[48px] text-[13px] leading-[1.8] text-muted max-[760px]:text-[12px]">
+                {step.description}
+              </p>
+              <CopyCommand
+                command={step.command}
+                note={`STEP ${index + 1} OF 3 · SOURCE ACCESS, NO PREBUILT DOWNLOAD`}
+              />
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
+    </LayoutGroup>
   );
 }
