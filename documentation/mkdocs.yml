@@ -7,7 +7,7 @@ edit_uri: https://github.com/starbounded-dev/starwebsite/edit/dev/documentation/
 docs_dir: docs
 site_dir: site
 use_directory_urls: false
-copyright: Starbounded Studio · Building in the open
+copyright: Starbounded · Building in the open
 
 theme:
   name: material
@@ -46,7 +46,7 @@ nav:
       - Find your way around: editor.md
       - Rendering & materials: rendering.md
   - Contributing: contributing.md
-  - Starbounded Studio ↗: https://www.starbounded.com/
+  - Starbounded ↗: https://www.starbounded.com/
 
 plugins:
   - search
@@ -80,4 +80,4 @@ extra:
       name: LuxEngine source
     - icon: material/web
       link: https://www.starbounded.com/
-      name: Starbounded Studio
+      name: Starbounded

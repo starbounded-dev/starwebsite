@@ -45,7 +45,7 @@ export function SetupGuide() {
       <Tabs
         value={active}
         onValueChange={setActive}
-        className="min-w-0 overflow-hidden rounded-[12px] border border-line bg-paper"
+        className="min-w-0 overflow-hidden rounded-[14px] border border-line bg-surface"
       >
         <TabsList
           aria-label="Installation steps"
@@ -55,7 +55,7 @@ export function SetupGuide() {
             <TabsTrigger
               key={step.id}
               value={step.id}
-              className="border-0 border-r border-line px-[14px] py-[18px] text-left text-[11px] leading-[1.5] text-muted last:border-r-0 hover:text-accent focus-visible:outline-offset-[-4px] data-[state=active]:text-accent max-[760px]:px-[10px] max-[760px]:py-[14px] max-[760px]:text-[10px]"
+              className="border-0 border-r border-line px-[16px] py-[16px] text-left text-[14px] leading-[1.35] text-muted last:border-r-0 hover:text-ink focus-visible:outline-offset-[-4px] data-[state=active]:text-ink max-[760px]:px-[12px] max-[760px]:py-[14px] max-[760px]:text-[13px]"
             >
               {active === step.id ? (
                 <TabHighlight
@@ -63,8 +63,8 @@ export function SetupGuide() {
                   className="after:absolute after:inset-x-0 after:bottom-[-1px] after:h-[2px] after:bg-accent"
                 />
               ) : null}
-              <span className="mono mb-[8px] block text-[10px]">
-                0{index + 1}
+              <span className="mb-[6px] block text-accent">
+                Step {index + 1}
               </span>
               {step.title}
             </TabsTrigger>
@@ -74,29 +74,16 @@ export function SetupGuide() {
           <TabsContent
             key={step.id}
             value={step.id}
-            className="p-[27px] max-[760px]:px-[18px] max-[760px]:py-[23px]"
+            className="p-[28px] max-[760px]:px-[18px] max-[760px]:py-[22px]"
           >
             <div>
-              <div className="mono mb-[27px] flex items-center justify-between gap-[15px] text-[9px] text-muted">
-                <span aria-hidden="true" className="flex gap-[5px]">
-                  {[0, 1, 2].map((dot) => (
-                    <i
-                      key={dot}
-                      className="block size-[5px] rounded-full bg-line"
-                    />
-                  ))}
-                </span>
-                WINDOWS / TERMINAL
-              </div>
-              <h3 className="mb-[14px] text-[23px] font-medium">
-                {step.title}
-              </h3>
-              <p className="mb-[25px] min-h-[48px] text-[13px] leading-[1.8] text-muted max-[760px]:text-[12px]">
+              <h3 className="mb-[10px] text-[22px]">{step.title}</h3>
+              <p className="mb-[24px] min-h-[52px] text-pretty text-muted">
                 {step.description}
               </p>
               <CopyCommand
                 command={step.command}
-                note={`STEP ${index + 1} OF 3 · SOURCE ACCESS, NO PREBUILT DOWNLOAD`}
+                note={`Step ${index + 1} of 3 on Windows. LuxEngine builds from source.`}
               />
             </div>
           </TabsContent>

@@ -7,7 +7,7 @@ function subscribe(onChange: () => void) {
   window.addEventListener(themeEvent, onChange);
   const onStorage = (event: StorageEvent) => {
     if (event.key !== "starbounded-theme" && event.key !== null) return;
-    const theme = event.newValue === "dark" ? "dark" : "light";
+    const theme = event.newValue === "light" ? "light" : "dark";
     document.documentElement.dataset.theme = theme;
     document.documentElement.style.colorScheme = theme;
     onChange();
@@ -20,7 +20,8 @@ function subscribe(onChange: () => void) {
 }
 
 const getTheme = () => document.documentElement.dataset.theme === "dark";
-const getServerTheme = () => false;
+// Dark is the house default, so the server renders the pressed state.
+const getServerTheme = () => true;
 
 export function ThemeToggle() {
   const dark = useSyncExternalStore(subscribe, getTheme, getServerTheme);
@@ -55,7 +56,7 @@ export function ThemeToggle() {
   }
   return (
     <button
-      className="touch-target grid size-[35px] place-items-center rounded-[6px] border-0 text-muted transition-[color,background-color,transform] duration-150 hover:bg-tint hover:text-accent active:scale-[0.97] max-[760px]:w-[31px]"
+      className="icon-button touch-target"
       type="button"
       onClick={toggle}
       aria-label="Dark theme"
@@ -69,7 +70,8 @@ export function ThemeToggle() {
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.4"
+        strokeWidth="1.6"
+        strokeLinecap="round"
         aria-hidden="true"
       >
         <circle cx="12" cy="12" r="4" />
@@ -82,7 +84,8 @@ export function ThemeToggle() {
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.4"
+        strokeWidth="1.6"
+        strokeLinecap="round"
         aria-hidden="true"
       >
         <path d="M20.8 13A9 9 0 0 1 11 3a9 9 0 1 0 9.8 10Z" />

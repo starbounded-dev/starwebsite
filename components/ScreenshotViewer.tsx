@@ -59,16 +59,14 @@ export function ScreenshotViewer({
           to close.
         </DialogDescription>
         <div className="screenshot-dialog-top">
-          <span className="mono" aria-live="polite">
-            LUXENGINE / {screenshot.title}
-          </span>
+          <span aria-live="polite">LuxEngine · {screenshot.title}</span>
           <DialogClose asChild>
             <button
               type="button"
               className="touch-target"
               aria-label="Close screenshot viewer"
             >
-              Close ✕
+              Close
             </button>
           </DialogClose>
         </div>
@@ -86,10 +84,10 @@ export function ScreenshotViewer({
             aria-label="Previous screenshot"
             onClick={onPrevious}
           >
-            ← Previous
+            Previous
           </button>
           <a href={screenshot.src} target="_blank" rel="noopener noreferrer">
-            Open original image ↗
+            Open original image
           </a>
           <button
             type="button"
@@ -97,7 +95,7 @@ export function ScreenshotViewer({
             aria-label="Next screenshot"
             onClick={onNext}
           >
-            Next →
+            Next
           </button>
         </div>
       </DialogContent>

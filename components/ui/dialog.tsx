@@ -16,7 +16,7 @@ export function DialogContent({
 }: ComponentProps<typeof DialogPrimitive.Content>) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="dialog-overlay fixed inset-0 z-50 bg-[#15101eea] backdrop-blur-[8px]" />
+      <DialogPrimitive.Overlay className="dialog-overlay fixed inset-0 z-50 bg-[oklch(0.1_0.012_285/0.9)] backdrop-blur-[8px]" />
       <DialogPrimitive.Content
         aria-modal="true"
         className={cn("dialog-content fixed left-1/2 top-1/2 z-50", className)}

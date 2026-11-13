@@ -5,7 +5,7 @@ import * as m from "motion/react-m";
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 
-// shadcn/ui's Radix composition, using the studio's existing visual tokens.
+// shadcn/ui's Radix composition, using Starbounded's visual tokens.
 export const Tabs = TabsPrimitive.Root;
 
 export function TabsList(props: ComponentProps<typeof TabsPrimitive.List>) {
@@ -36,7 +36,7 @@ export function TabsContent({
     <TabsPrimitive.Content
       data-slot="tabs-content"
       className={cn(
-        "tab-panel min-w-0 focus-visible:outline-3 focus-visible:outline-offset-[-3px] focus-visible:outline-accent data-[state=inactive]:hidden",
+        "tab-panel min-w-0 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-accent data-[state=inactive]:hidden",
         className,
       )}
       {...props}

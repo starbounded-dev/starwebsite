@@ -2,7 +2,13 @@
 
 import Image from "next/image";
 import { LayoutGroup } from "motion/react";
-import { useId, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { screenshots } from "@/lib/screenshots";
 import { ScreenshotViewer } from "./ScreenshotViewer";
 import {
@@ -27,6 +33,7 @@ export function ScenePreview() {
   const [open, setOpen] = useState(false);
   const opener = useRef<HTMLButtonElement>(null);
   const expandButton = useRef<HTMLButtonElement>(null);
+  const tabList = useRef<HTMLDivElement>(null);
   const id = useId();
   const mobile = useSyncExternalStore(
     subscribeViewport,
@@ -37,6 +44,25 @@ export function ScenePreview() {
     (screenshot) => screenshot.src === active,
   );
   const current = screenshots[activeIndex];
+
+  // The thumbnail list scrolls, so keep the selected one visible when the
+  // viewer's arrows change it. Only the list moves, never the page.
+  useEffect(() => {
+    const list = tabList.current;
+    const tab = list?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!list || !tab) return;
+    const box = list.getBoundingClientRect();
+    const item = tab.getBoundingClientRect();
+    if (list.scrollHeight > list.clientHeight) {
+      if (item.top < box.top) list.scrollTop -= box.top - item.top + 10;
+      else if (item.bottom > box.bottom)
+        list.scrollTop += item.bottom - box.bottom + 10;
+    } else if (list.scrollWidth > list.clientWidth) {
+      if (item.left < box.left) list.scrollLeft -= box.left - item.left + 8;
+      else if (item.right > box.right)
+        list.scrollLeft += item.right - box.right + 8;
+    }
+  }, [active, mobile]);
 
   function browse(direction: number) {
     setActive((selected) => {
@@ -59,9 +85,7 @@ export function ScenePreview() {
       >
         <figure className="engine-gallery">
           <div className="gallery-topline">
-            <span className="mono">
-              <i className="status-dot" aria-hidden="true" /> INSIDE LUXENGINE
-            </span>
+            <span>Captured in the LuxEngine editor</span>
             <button
               ref={expandButton}
               className="gallery-expand touch-target"
@@ -111,18 +135,19 @@ export function ScenePreview() {
                     alt={screenshot.alt}
                     width={3839}
                     height={2088}
-                    sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 1100px) calc(100vw - 304px), (max-width: 1376px) calc(100vw - 328px), 1048px"
+                    sizes="(max-width: 760px) calc(100vw - 42px), (max-width: 1100px) calc(100vw - 274px), (max-width: 1280px) calc(100vw - 330px), 950px"
                   />
                 </span>
               </button>
             </TabsContent>
           ))}
           <TabsList
+            ref={tabList}
             className="gallery-tabs"
             aria-label="LuxEngine screenshots"
             data-stagger="true"
           >
-            {screenshots.map((screenshot, index) => (
+            {screenshots.map((screenshot) => (
               <TabsTrigger key={screenshot.src} value={screenshot.src}>
                 {active === screenshot.src ? (
                   <TabHighlight
@@ -135,13 +160,10 @@ export function ScenePreview() {
                     src={screenshot.src}
                     alt=""
                     fill
-                    sizes="(max-width: 760px) 200px, (max-width: 1100px) 62px, 72px"
+                    sizes="(max-width: 760px) 200px, (max-width: 1100px) 60px, 76px"
                   />
                 </span>
-                <span className="gallery-tab-text">
-                  <span className="mono">0{index + 1}</span>
-                  <span>{screenshot.title}</span>
-                </span>
+                <span>{screenshot.title}</span>
               </TabsTrigger>
             ))}
           </TabsList>
@@ -151,8 +173,8 @@ export function ScenePreview() {
             aria-atomic="true"
           >
             <p>{current.caption}</p>
-            <span className="mono">
-              {current.scene} / {String(activeIndex + 1).padStart(2, "0")} OF 03
+            <span>
+              {activeIndex + 1} of {screenshots.length}
             </span>
           </figcaption>
         </figure>

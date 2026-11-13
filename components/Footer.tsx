@@ -1,43 +1,42 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
-import { Arrow } from "./Icons";
-import { navigationLinks, type NavigationLink } from "@/lib/navigation";
+import { footerGroups, type NavigationLink } from "@/lib/navigation";
+
 export function Footer() {
   return (
     <footer className="site-footer">
       <div className="wrap">
         <div className="footer-top">
-          <Link aria-label="Starbounded Studio home" href="/">
-            <Logo />
-          </Link>
-          <p>
-            An independent studio in Canada. Building LuxEngine, and sharing the
-            work as we go.
-          </p>
-          <a className="text-link" href="mailto:hello@starbounded.com">
-            hello@starbounded.com <Arrow diagonal />
-          </a>
-        </div>
-        <div className="footer-links">
-          <div>
-            {navigationLinks.map((link: NavigationLink) =>
-              link.document ? (
-                <a key={link.href} href={link.href}>
-                  {link.label}
-                </a>
-              ) : (
-                <Link key={link.href} href={link.href}>
-                  {link.label}
-                </Link>
-              ),
-            )}
+          <div className="footer-brand">
+            <Link aria-label="Starbounded home" href="/">
+              <Logo />
+            </Link>
+            <p>Tools for people who build worlds. Made in Canada.</p>
           </div>
-          <a href="#main-content">Back to top ↑</a>
+          {footerGroups.map((group) => (
+            <nav
+              className="footer-group"
+              key={group.title}
+              aria-labelledby={`footer-${group.title.toLowerCase()}`}
+            >
+              <h2 id={`footer-${group.title.toLowerCase()}`}>{group.title}</h2>
+              <ul>
+                {group.links.map((link: NavigationLink) => (
+                  <li key={link.href}>
+                    {link.document || link.external ? (
+                      <a href={link.href}>{link.label}</a>
+                    ) : (
+                      <Link href={link.href}>{link.label}</Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
-        <div className="footer-bottom mono">
-          <span>© {new Date().getFullYear()} Starbounded Studio</span>
-          <span>Made in Canada</span>
-          <a href="https://github.com/starbounded-dev">Source on GitHub ↗</a>
+        <div className="footer-bottom">
+          <span>© {new Date().getFullYear()} Starbounded</span>
+          <a href="#main-content">Back to top</a>
         </div>
       </div>
     </footer>

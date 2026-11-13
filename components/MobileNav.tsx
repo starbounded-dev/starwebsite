@@ -37,10 +37,25 @@ export function MobileNav({ links, sourceUrl, engine }: MobileNavProps) {
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="touch-target block size-[38px] rounded-[6px] border-0 p-[3px] text-[22px] transition-[color,background-color,transform] duration-150 hover:bg-tint hover:text-accent active:scale-[0.97] max-[760px]:w-[32px] max-[760px]:text-[20px]"
+              className="icon-button touch-target text-ink"
               aria-label={open ? "Close navigation" : "Open navigation"}
             >
-              <span aria-hidden="true">{open ? "✕" : "☰"}</span>
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                {open ? (
+                  <path d="m6 6 12 12M18 6 6 18" />
+                ) : (
+                  <path d="M4 8h16M4 16h16" />
+                )}
+              </svg>
             </button>
           </PopoverTrigger>
         </span>
@@ -49,7 +64,7 @@ export function MobileNav({ links, sourceUrl, engine }: MobileNavProps) {
         className="mobile-menu"
         align="end"
         sideOffset={0}
-        collisionPadding={24}
+        collisionPadding={20}
         aria-label="Mobile navigation"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
@@ -88,7 +103,7 @@ export function MobileNav({ links, sourceUrl, engine }: MobileNavProps) {
             ),
           )}
           <a href={sourceUrl} onClick={() => setOpen(false)}>
-            Source <Arrow diagonal />
+            GitHub <Arrow diagonal />
           </a>
         </nav>
       </PopoverContent>

@@ -60,16 +60,16 @@ export function CopyCommand({
 
   return (
     <>
-      <div className="flex items-start gap-[11px] rounded-[7px] bg-[#21192e] px-[14px] py-[17px] text-[#e8ddf6] max-[760px]:px-[11px] max-[760px]:py-[15px]">
+      <div className="flex items-start gap-[12px] rounded-[8px] bg-code px-[16px] py-[16px] text-code-ink inset-ring inset-ring-white/10 max-[760px]:px-[12px] max-[760px]:py-[14px]">
         <span
           aria-hidden="true"
-          className="font-mono text-[12px] text-[#b693ed]"
+          className="font-mono text-[14px] leading-[1.7] text-code-ink/50 select-none"
         >
           $
         </span>
         <code
           ref={code}
-          className="min-w-0 flex-1 font-mono text-[11px] leading-[1.8] wrap-anywhere max-[760px]:text-[10px]"
+          className="min-w-0 flex-1 font-mono text-[14px] leading-[1.7] wrap-anywhere max-[760px]:text-[13px]"
         >
           {command}
         </code>
@@ -80,7 +80,7 @@ export function CopyCommand({
           title={state === "copied" ? "Copied" : "Copy command"}
           type="button"
           onClick={copy}
-          className="touch-target grid shrink-0 place-items-center border-0 p-[3px] text-[#cbb5e8] transition-[color,transform] duration-150 hover:text-white focus-visible:outline-[#cbb5e8] active:scale-[0.97]"
+          className="touch-target grid shrink-0 place-items-center border-0 p-[3px] text-code-ink/70 transition-[color,transform] duration-150 hover:text-code-ink focus-visible:outline-code-ink active:scale-[0.97]"
         >
           <AnimatePresence initial={false} mode="popLayout">
             <m.span
@@ -115,7 +115,7 @@ export function CopyCommand({
       </div>
       <div
         id={statusId}
-        className="mono mt-[20px] min-h-[15px] text-[9px] tracking-[0.02em] text-muted max-[760px]:text-[8px]"
+        className="mt-[14px] min-h-[21px] text-[14px] leading-[1.5] text-muted"
         role="status"
         aria-live="polite"
         aria-atomic="true"

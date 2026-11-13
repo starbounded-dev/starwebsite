@@ -1,42 +1,45 @@
-import type { Metadata } from "next";
-import { IBM_Plex_Sans, Space_Grotesk } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { JetBrains_Mono, Mona_Sans } from "next/font/google";
 import "./globals.css";
 import { InteractionProvider } from "@/components/InteractionProvider";
 
-const spaceGrotesk = Space_Grotesk({
+// One family carries the brand: the width axis gives headlines their wide voice.
+const monaSans = Mona_Sans({
   subsets: ["latin"],
-  variable: "--font-space",
+  variable: "--font-mona",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  axes: ["wdth"],
 });
 
-const plexSans = IBM_Plex_Sans({
+// Monospace is reserved for commands and code.
+const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-plex",
+  variable: "--font-code",
   display: "swap",
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500"],
 });
+
+const description =
+  "Starbounded is an independent software company making tools for people who build games and interactive worlds. Our first product is LuxEngine, an open-source 3D game engine.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://starbounded.com"),
   title: {
-    default: "Starbounded Studio — Small studio. Big workbench.",
-    template: "%s | Starbounded Studio",
+    default: "Starbounded — Tools for people who build worlds",
+    template: "%s | Starbounded",
   },
-  description:
-    "An independent studio in Canada, building the LuxEngine game engine and sharing the work as we go.",
+  description,
   openGraph: {
-    title: "Starbounded Studio",
-    description:
-      "An independent studio in Canada, building LuxEngine and sharing the work as we go.",
+    title: "Starbounded — Tools for people who build worlds",
+    description,
     url: "https://starbounded.com",
-    siteName: "Starbounded Studio",
+    siteName: "Starbounded",
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "/images/lux-editor-sponza.webp",
-        width: 3839,
+        url: "/images/lux-dist-renderer.webp",
+        width: 3840,
         height: 2088,
         alt: "Sponza running in the LuxEngine editor",
       },
@@ -44,10 +47,14 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Starbounded Studio",
-    description:
-      "An independent studio in Canada, building LuxEngine and sharing the work as we go.",
+    title: "Starbounded — Tools for people who build worlds",
+    description,
   },
+};
+
+// Matches the dark default page colour (--paper).
+export const viewport: Viewport = {
+  themeColor: "#0c0c12",
 };
 
 export default function RootLayout({
@@ -55,6 +62,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Dark is the house default; a stored choice wins.
   const themeScript = `
     try {
       if (!sessionStorage.getItem("starbounded-entry-seen")) {
@@ -64,12 +72,12 @@ export default function RootLayout({
     } catch { /* Entry animation is optional when storage is unavailable. */ }
     try {
       const stored = localStorage.getItem("starbounded-theme");
-      const theme = stored === "light" || stored === "dark" ? stored : "light";
+      const theme = stored === "light" || stored === "dark" ? stored : "dark";
       document.documentElement.dataset.theme = theme;
       document.documentElement.style.colorScheme = theme;
     } catch {
-      document.documentElement.dataset.theme = "light";
-      document.documentElement.style.colorScheme = "light";
+      document.documentElement.dataset.theme = "dark";
+      document.documentElement.style.colorScheme = "dark";
     }
   `;
 
@@ -81,7 +89,7 @@ export default function RootLayout({
       {/* Browser extensions can add attributes before React hydrates this element. */}
       <body
         suppressHydrationWarning
-        className={`${spaceGrotesk.variable} ${plexSans.variable} antialiased`}
+        className={`${monaSans.variable} ${jetBrainsMono.variable} antialiased`}
       >
         <InteractionProvider>{children}</InteractionProvider>
       </body>

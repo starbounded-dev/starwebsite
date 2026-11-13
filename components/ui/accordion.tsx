@@ -18,18 +18,30 @@ export function AccordionTrigger({
         <AccordionPrimitive.Trigger
           data-slot="accordion-trigger"
           className={cn(
-            "group flex w-full touch-manipulation items-center justify-between border-0 pb-[6px] text-left text-[12px] transition-colors duration-150 hover:text-accent",
+            "group flex min-h-[44px] w-full touch-manipulation items-center justify-between gap-[16px] border-0 text-left text-[15px] font-semibold transition-colors duration-150 hover:text-accent",
             className,
           )}
           {...props}
         >
           {children}
-          <span
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
             aria-hidden="true"
-            className="text-[20px] text-accent transition-transform duration-180 ease-out group-data-[state=open]:rotate-45 motion-reduce:transition-none"
+            className="text-accent"
           >
-            +
-          </span>
+            <path d="M5 12h14" />
+            {/* The upright stroke fades out, turning the plus into a minus. */}
+            <path
+              d="M12 5v14"
+              className="transition-opacity duration-150 group-data-[state=open]:opacity-0"
+            />
+          </svg>
         </AccordionPrimitive.Trigger>
       </h4>
     </AccordionPrimitive.Header>

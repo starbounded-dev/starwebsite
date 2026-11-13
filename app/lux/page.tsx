@@ -4,163 +4,205 @@ import Link from "next/link";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Arrow } from "@/components/Icons";
+import { Bounds } from "@/components/Bounds";
 import { ScenePreview } from "@/components/ScenePreview";
 import { Roadmap } from "@/components/Roadmap";
 import { SetupGuide } from "@/components/SetupGuide";
+import { luxRepoUrl } from "@/lib/navigation";
 
 export const metadata: Metadata = {
   title: "LuxEngine",
   description:
-    "Inside LuxEngine: Starbounded’s open-source C++ engine, editor, rendering experiments, and the work ahead.",
+    "LuxEngine is Starbounded’s open-source 3D game engine and editor, written in C++20 on Vulkan for Windows and Linux. See what works today and build it from source.",
 };
+
+const specs = [
+  { term: "Language", detail: "C++20" },
+  { term: "Graphics", detail: "Vulkan" },
+  { term: "Platforms", detail: "Windows, Linux" },
+  { term: "License", detail: "Apache-2.0" },
+  { term: "Status", detail: "In development" },
+];
+
+// Summarized from "What works today" in the LuxEngine README.
+const systems = [
+  {
+    term: "Rendering",
+    detail:
+      "A deferred PBR pipeline with clustered light culling, a render graph, cascaded shadow maps, GTAO, screen-space reflections, bloom, and depth of field.",
+  },
+  {
+    term: "Editor",
+    detail:
+      "A docking editor with gizmos, snapshot undo and redo, a command palette, a content browser, a profiler, and a material editor.",
+  },
+  {
+    term: "Scenes and prefabs",
+    detail:
+      "ECS scenes with entity hierarchies, prefabs with variants, YAML serialization, and Play, Simulate, and Stop in the editor.",
+  },
+  {
+    term: "Physics",
+    detail:
+      "3D rigid bodies, colliders, and a character controller on Jolt. 2D bodies and colliders on Box2D.",
+  },
+  {
+    term: "Scripting",
+    detail:
+      "C# script components on .NET 9, with hot reload and attribute-driven inspectors. The scripting API is still partial.",
+  },
+  {
+    term: "Assets and runtime",
+    detail:
+      "A UUID-based asset pipeline with binary asset packs, and a standalone runtime that plays a packaged project without the editor.",
+  },
+];
 
 export default function LuxPage() {
   return (
     <>
       <Nav engine />
-      <main id="main-content" className="engine-page">
-        <section className="engine-intro wrap" id="overview">
-          <Link href="/" className="breadcrumb">
-            ← Starbounded Studio
-          </Link>
-          <div className="engine-title-row">
-            <div className="engine-title">
-              <Image
-                src="/luxengine-logo.png"
-                alt="LuxEngine logo"
-                width={112}
-                height={112}
-                priority
-              />
-              <div>
-                <span className="label">A STARBOUNDED PROJECT</span>
-                <h1>LuxEngine</h1>
-              </div>
-            </div>
-            <span className="work-status">
-              <i className="status-dot" /> In development
-            </span>
+      <main id="main-content" data-product="lux">
+        <section className="wrap product-hero" id="overview">
+          <nav className="breadcrumb" aria-label="Breadcrumb">
+            <Link href="/#products">Products</Link>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">LuxEngine</span>
+          </nav>
+          <div className="product-title">
+            <Image
+              src="/luxengine-logo.png"
+              alt=""
+              width={208}
+              height={208}
+              priority
+            />
+            <h1>LuxEngine</h1>
           </div>
-          <div className="engine-intro-bottom">
-            <p>
-              An engine we can build with.
-              <br />
-              <span>And understand along the way.</span>
-            </p>
+          <div className="product-pitch">
+            <p>A 3D game engine and editor you can read, build, and change.</p>
             <div>
-              <p>
-                Our C++ engine for Windows, with a working renderer, editor, and
-                material tools. It’s early, the source is open, and there’s a
-                lot we want to do.
+              <p className="lede">
+                LuxEngine is written in C++20 on Vulkan, with a deferred PBR
+                renderer and a docking editor. It is in active development and
+                not production-ready, and the source is open.
               </p>
               <div className="button-row">
                 <a href="#setup" className="button button-primary">
                   Get the source <Arrow />
                 </a>
-                <a
-                  href="https://github.com/starbounded-dev/LuxEngine"
-                  className="text-link"
-                >
-                  GitHub <Arrow diagonal />
+                <a href={luxRepoUrl} className="text-link">
+                  View on GitHub <Arrow diagonal />
                 </a>
               </div>
             </div>
           </div>
+          <dl className="spec-strip">
+            {specs.map((spec) => (
+              <div key={spec.term}>
+                <dt>{spec.term}</dt>
+                <dd>{spec.detail}</dd>
+              </div>
+            ))}
+          </dl>
         </section>
-        <section className="wrap engine-showcase" id="screenshots">
+
+        <section className="wrap product-gallery" id="screenshots">
           <ScenePreview />
         </section>
-        <section className="wrap section engine-detail-section" id="focus">
-          <div>
-            <span className="label">INSIDE THE PROJECT</span>
-            <h2>
-              A renderer.
-              <br />
-              An editor.
-              <br />A lot of questions.
-            </h2>
+
+        <section className="wrap section" id="inside">
+          <div className="section-head">
+            <h2>What works today.</h2>
+            <p>
+              The engine is early, so this list is specific. The README keeps
+              the same list for what is partial and what is missing.
+            </p>
           </div>
-          <div className="engine-detail-copy">
-            <p className="lead">
-              The best way to understand an engine is to build one.
-            </p>
+          <dl className="inside-grid">
+            {systems.map((system) => (
+              <div key={system.term}>
+                <dt>{system.term}</dt>
+                <dd>{system.detail}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="inside-note">
             <p>
-              The editor brings a scene hierarchy, content browser, material
-              editing, and rendering settings together. We’re refining those
-              tools one piece at a time, keeping the code understandable as the
-              engine grows.
-            </p>
-            <p>
-              There are rough edges, and some ideas are still just plans. The
-              repository is the best place to see what works today and what
-              needs attention.
+              Not here yet: skeletal animation, particles, terrain, networking,
+              and any platform beyond Windows and Linux.
             </p>
             <a
-              href="https://github.com/starbounded-dev/LuxEngine#readme"
+              href={`${luxRepoUrl}/blob/dev/README.md#what-works-today`}
               className="text-link"
             >
-              Read the project notes <Arrow diagonal />
+              Read the full status <Arrow diagonal />
             </a>
           </div>
         </section>
-        <section className="forward-section wrap section" id="roadmap">
-          <div className="forward-intro">
-            <span className="label">THE WORK DOESN’T STOP HERE</span>
-            <h2>Forward.</h2>
-            <p>
-              Building on what works, making the tools easier to use, and
-              leaving room to explore.
-            </p>
-            <a
-              href="https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h"
-              className="text-link"
-            >
-              Open the roadmap <Arrow diagonal />
-            </a>
-          </div>
-          <Roadmap />
-        </section>
-        <section className="setup-band" id="setup">
-          <div className="setup-section wrap section">
-            <div>
-              <span className="label">MAKE A START</span>
-              <h2>
-                Pull the code.
-                <br />
-                Try a change.
-              </h2>
-              <p>
-                There’s no packaged installer yet. Start with the repository and
-                follow the Windows setup workflow.
-              </p>
-              <div className="requirements">
-                <span>Windows</span>
-                <span>Visual Studio 2022</span>
-                <span>Vulkan SDK</span>
+
+        <section className="band" id="roadmap">
+          <div className="wrap section">
+            <div className="section-head board-head">
+              <div>
+                <h2>What comes next.</h2>
+                <p>
+                  Where the work stands, as a project board. Items move right as
+                  they land, and the order changes as we learn.
+                </p>
               </div>
               <a
+                href="https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h"
                 className="text-link"
-                href="/docs/getting-started.html"
               >
-                Full setup instructions <Arrow diagonal />
+                Open the full roadmap <Arrow diagonal />
               </a>
             </div>
-            <SetupGuide />
+            <Roadmap />
           </div>
         </section>
-        <section className="contact-strip wrap">
-          <div>
-            <span className="label">
-              A QUESTION COUNTS AS A CONTRIBUTION, TOO
-            </span>
-            <h2>Take a look. Join in.</h2>
+
+        <section className="wrap section split" id="setup">
+          <div className="split-copy">
+            <h2>Build it from source.</h2>
+            <p className="lede">
+              There is no packaged build yet. Three steps get you to the editor
+              on Windows, and the setup guide covers the SDKs to install first.
+            </p>
+            <ul className="requirements" role="list">
+              <li>Visual Studio 2022</li>
+              <li>Vulkan SDK 1.4</li>
+              <li>.NET SDK 9</li>
+            </ul>
+            <div className="split-links">
+              <a href="/docs/getting-started.html" className="text-link">
+                Read the setup guide <Arrow />
+              </a>
+              <a href="/docs/getting-started.html#linux" className="text-link">
+                Building on Linux <Arrow />
+              </a>
+            </div>
           </div>
-          <a
-            href="https://github.com/starbounded-dev/LuxEngine"
-            className="button button-outline"
-          >
-            Explore the repository <Arrow diagonal />
-          </a>
+          <SetupGuide />
+        </section>
+
+        <section className="wrap closing" aria-labelledby="closing-title">
+          <div className="closing-panel">
+            <Bounds />
+            <h2 id="closing-title">Found a rough edge? Tell us.</h2>
+            <p>
+              Questions, bug reports, and pull requests are all welcome. A small
+              scene that reproduces the problem helps the most.
+            </p>
+            <div className="button-row">
+              <a href={luxRepoUrl} className="button button-outline">
+                Open the repository <Arrow diagonal />
+              </a>
+              <a href={`${luxRepoUrl}/issues`} className="text-link">
+                Report an issue <Arrow diagonal />
+              </a>
+            </div>
+          </div>
         </section>
       </main>
       <Footer />

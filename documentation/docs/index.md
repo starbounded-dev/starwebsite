@@ -2,7 +2,7 @@
 
 # Build it. Understand it.
 
-LuxEngine is a C++ game engine and editor from Starbounded Studio. These guides are a place to start: get the source, build the tools, and understand what you're looking at.
+LuxEngine is a C++ game engine and editor from Starbounded. These guides are a place to start: get the source, build the tools, and understand what you're looking at.
 
 The engine is still changing. The setup guide follows the public **`dev` branch**, which contains the current LuxEngine code. Older branches can use different project names and dependencies.
 
@@ -44,4 +44,4 @@ The engine is still changing. The setup guide follows the public **`dev` branch*
 
 Start with [troubleshooting](troubleshooting.md). If you're still stuck, include your branch, commit, setup output, and the steps that led to the problem in a [GitHub issue](https://github.com/starbounded-dev/LuxEngine/issues).
 
-[Back to Starbounded Studio ↗](https://www.starbounded.com/)
+[Back to Starbounded ↗](https://www.starbounded.com/)

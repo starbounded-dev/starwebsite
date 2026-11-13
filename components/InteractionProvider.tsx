@@ -10,7 +10,8 @@ export function InteractionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const timer = setTimeout(
       () => delete document.documentElement.dataset.entry,
-      500,
+      // Long enough for the hero entrance to finish before the hook is removed.
+      1400,
     );
     return () => clearTimeout(timer);
   }, []);

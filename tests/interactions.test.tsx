@@ -81,7 +81,7 @@ test("copy feedback belongs to the selected command, including rejected clipboar
   assert.equal(screen.getByRole("status").textContent, "Copied to clipboard");
   assert.ok(screen.getByRole("button", { name: "Command copied" }));
   await user.click(screen.getByRole("tab", { name: /Set up dependencies/ }));
-  assert.match(screen.getByRole("status").textContent ?? "", /STEP 2 OF 3/);
+  assert.match(screen.getByRole("status").textContent ?? "", /Step 2 of 3/);
   Object.defineProperty(navigator.clipboard, "writeText", {
     configurable: true,
     value: async () => {
@@ -114,7 +114,7 @@ test("late clipboard completion cannot overwrite another step's feedback", async
   await user.click(screen.getByRole("button", { name: "Copy command" }));
   await user.click(screen.getByRole("tab", { name: /Build the editor/ }));
   await act(async () => finishCopy());
-  assert.match(screen.getByRole("status").textContent ?? "", /STEP 3 OF 3/);
+  assert.match(screen.getByRole("status").textContent ?? "", /Step 3 of 3/);
 });
 
 test("gallery keys follow orientation; the viewer traps focus, browses, closes, and returns focus", async () => {
@@ -161,12 +161,12 @@ test("gallery keys follow orientation; the viewer traps focus, browses, closes, 
     within(dialog).getByRole("button", { name: "Close screenshot viewer" }),
   );
   await user.keyboard("{ArrowRight}");
-  assert.ok(within(dialog).getByRole("img", { name: /Sponza scene/ }));
+  assert.ok(within(dialog).getByRole("img", { name: /Sponza courtyard vaults/ }));
   await user.keyboard("{Escape}");
   await waitFor(() => assert.equal(screen.queryByRole("dialog"), null));
   assert.equal(document.activeElement, opener);
   const imageOpener = screen.getByRole("button", {
-    name: "Open Scenes & editor screenshot in full size",
+    name: "Open Sponza in play screenshot in full size",
   });
   await user.click(imageOpener);
   await user.keyboard("{ArrowRight}{Escape}");
@@ -174,20 +174,24 @@ test("gallery keys follow orientation; the viewer traps focus, browses, closes, 
   assert.equal(document.activeElement, opener);
 });
 
-test("roadmap disclosures support keyboard traversal and independent open states", async () => {
-  const user = userEvent.setup();
+test("roadmap board exposes labelled columns with item counts", () => {
   render(<Roadmap />);
-  const triggers = screen.getAllByRole("button", {
-    name: /Work in this area:/,
-  });
-  await user.click(triggers[0]);
-  assert.equal(triggers[0].getAttribute("aria-expanded"), "true");
-  await user.keyboard("{ArrowDown}{Enter}");
-  assert.equal(document.activeElement, triggers[1]);
-  assert.equal(triggers[1].getAttribute("aria-expanded"), "true");
-  assert.equal(triggers[0].getAttribute("aria-expanded"), "true");
-  await user.keyboard("{Home}");
-  assert.equal(document.activeElement, triggers[0]);
+  const board = screen.getByRole("region", { name: "LuxEngine project board" });
+  assert.equal(board.getAttribute("tabindex"), "0");
+  const columns = within(board).getAllByRole("region");
+  assert.deepEqual(
+    columns.map((column) =>
+      within(column).getByRole("heading").textContent?.replace(/\d+$/, ""),
+    ),
+    ["Further out", "Up next", "In progress", "Works today"],
+  );
+  for (const column of columns) {
+    const cards = within(column).getAllByRole("listitem").filter(
+      (item) => item.classList.contains("board-card"),
+    );
+    assert.ok(cards.length > 0);
+    assert.ok(within(column).getByLabelText(`${cards.length} items`));
+  }
 });
 
 test("mobile navigation dismisses with Escape, outside click, and desktop breakpoint", async () => {
@@ -204,7 +208,7 @@ test("mobile navigation dismisses with Escape, outside click, and desktop breakp
   await user.click(trigger);
   assert.ok(screen.getByRole("navigation", { name: "Mobile navigation" }));
   await waitFor(() =>
-    assert.equal(document.activeElement?.textContent, "Studio"),
+    assert.equal(document.activeElement?.textContent, "Products"),
   );
   await user.keyboard("{Escape}");
   await waitFor(() =>
