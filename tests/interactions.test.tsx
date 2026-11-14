@@ -42,15 +42,15 @@ test("setup tabs support arrows, Home/End, matching panels, and unique IDs acros
   assert.equal(document.activeElement?.getAttribute("aria-selected"), "true");
   assert.match(
     document.activeElement?.textContent ?? "",
-    /Fetch Asterwave/,
+    /Generate the solution/,
   );
   const panelId = document.activeElement?.getAttribute("aria-controls");
   assert.match(
     document.getElementById(panelId!)?.textContent ?? "",
-    /FetchAsterwave\.py/,
+    /Setup.bat/,
   );
   await user.keyboard("{End}");
-  assert.match(document.activeElement?.textContent ?? "", /Generate and build/);
+  assert.match(document.activeElement?.textContent ?? "", /Build the editor/);
   await user.keyboard("{Home}");
   assert.match(document.activeElement?.textContent ?? "", /Clone the source/);
   const ids = [...document.querySelectorAll("[id]")].map(
@@ -81,7 +81,7 @@ test("copy feedback belongs to the selected command, including rejected clipboar
   assert.match(copied, /^git clone --branch dev/);
   assert.equal(screen.getByRole("status").textContent, "Copied to clipboard");
   assert.ok(screen.getByRole("button", { name: "Command copied" }));
-  await user.click(screen.getByRole("tab", { name: /Fetch Asterwave/ }));
+  await user.click(screen.getByRole("tab", { name: /Generate the solution/ }));
   assert.match(screen.getByRole("status").textContent ?? "", /Step 2 of 3/);
   Object.defineProperty(navigator.clipboard, "writeText", {
     configurable: true,
@@ -96,7 +96,7 @@ test("copy feedback belongs to the selected command, including rejected clipboar
   );
   assert.equal(
     window.getSelection()?.toString(),
-    "python scripts/FetchAsterwave.py",
+    ".\\scripts\\Setup.bat",
   );
 });
 
@@ -116,7 +116,7 @@ test("late clipboard completion cannot overwrite another step's feedback", async
     </InteractionProvider>,
   );
   await user.click(screen.getByRole("button", { name: "Copy command" }));
-  await user.click(screen.getByRole("tab", { name: /Generate and build/ }));
+  await user.click(screen.getByRole("tab", { name: /Build the editor/ }));
   await act(async () => finishCopy());
   assert.match(screen.getByRole("status").textContent ?? "", /Step 3 of 3/);
 });

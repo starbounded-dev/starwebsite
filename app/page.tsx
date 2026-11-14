@@ -89,9 +89,10 @@ export default function Home() {
                 <div>
                   <dt>Audio</dt>
                   <dd>
-                    FMOD Studio plays every sound. Asterwave traces the level’s
-                    geometry, so walls muffle what’s behind them and each room
-                    sets its own reverb.
+                    A built-in audio engine on miniaudio, with Sounds and a
+                    mixer you author in the editor. Soundwave, the engine’s own
+                    acoustics, muffles sound behind walls, carries it around
+                    corners and gives each room its reverb.
                   </dd>
                 </div>
                 <div>
@@ -104,7 +105,7 @@ export default function Home() {
                 <div>
                   <dt>Gameplay</dt>
                   <dd>
-                    Jolt for 3D physics, Box2D for 2D, C# scripts on .NET 9
+                    Jolt for 3D physics, Box2D for 2D, C# scripts on .NET 10
                     with hot reload, and a player that runs packaged projects
                     without the editor.
                   </dd>
@@ -185,9 +186,9 @@ export default function Home() {
             <Bounds />
             <h2 id="closing-title">Start with the engine.</h2>
             <p>
-              LuxEngine builds from source on Windows and Linux. For now the
-              build also needs the FMOD SDK and access to our private Asterwave
-              repository. The setup guide lists everything.
+              LuxEngine builds from source on Windows and Linux. You need the
+              Vulkan SDK and .NET 10, and audio is built in, so there’s nothing
+              else to install.
             </p>
             <div className="button-row">
               <Link href="/lux#setup" className="button button-primary">

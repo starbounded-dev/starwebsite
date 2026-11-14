@@ -20,7 +20,7 @@ import {
 export const metadata: Metadata = {
   title: "LuxEngine",
   description:
-    "LuxEngine is Starbounded’s 3D game engine and editor: C++20, Vulkan through NVIDIA NRI, Jolt physics, C# scripting on .NET 9 and an FMOD audio stack with ray-traced acoustics, for Windows and Linux. See what works today, what is planned for 2027.1, and how to build it.",
+    "LuxEngine is Starbounded’s 3D game engine and editor: C++20, Vulkan through NVIDIA NRI, Jolt physics, C# scripting on .NET 10 and a built-in audio engine with its own ray-traced acoustics, for Windows and Linux. See what works today, what is planned for 2027.1, and how to build it.",
 };
 
 const specs = [
@@ -31,9 +31,10 @@ const specs = [
   { term: "Status", detail: "In development" },
 ];
 
-// Sources: "What works today" in the LuxEngine README on dev, plus the render
-// features merged in PR 35 (area lights, FFT bloom, glass refraction), which
-// the README does not list yet.
+// Sources: "What works today" in the LuxEngine README on feature/lucky-merge
+// (PR 36, on its way into dev: the built-in audio engine, Soundwave and .NET 10),
+// plus the render features merged in PR 35 (area lights, FFT bloom, glass
+// refraction), which the README does not list yet.
 const systems = [
   {
     term: "Rendering",
@@ -53,7 +54,7 @@ const systems = [
   {
     term: "Audio",
     detail:
-      "FMOD Studio plays everything: banks, events, buses and snapshots. Asterwave traces rays through the level for reverb and room ambience, and walls muffle sound according to their material. See the Sound draws those paths in the viewport during Play.",
+      "A built-in engine on miniaudio. You author Sounds in the editor from clips and containers (random, sequence, layer, switch), group them into Sound Banks that load together, and mix them with buses, effects, snapshots and a reverb return. Soundwave, the engine’s own acoustics, muffles sound through walls by material, carries it around corners and through doorways, and measures each room’s reverb on the GPU.",
   },
   {
     term: "Editor",
@@ -73,7 +74,7 @@ const systems = [
   {
     term: "Scripting",
     detail:
-      "C# on .NET 9 through Coral, with hot reload and inspectors driven by attributes like [Range] and [Tooltip]. Scripts can reach entities, transforms, input, assets and audio. Physics and renderer bindings don’t exist yet.",
+      "C# on .NET 10 through Coral, with hot reload and inspectors driven by attributes like [Range] and [Tooltip]. Scripts can reach entities, transforms, input, assets and audio. Physics and renderer bindings don’t exist yet.",
   },
   {
     term: "Assets and runtime",
@@ -142,8 +143,8 @@ export default function LuxPage() {
             <h2>What works today.</h2>
             <p>
               The engine is early, so the list is specific. Everything here is
-              in the code on the dev branch. The README has the same list, plus
-              what’s partial and what’s missing.
+              in the code. The built-in audio and .NET 10 are in pull request
+              36, which is on its way into the dev branch.
             </p>
           </div>
           <dl className="inside-grid">
@@ -200,18 +201,20 @@ export default function LuxPage() {
           <div className="split-copy">
             <h2>Build it from source.</h2>
             <p className="lede">
-              There’s no packaged build yet, so you build it yourself. Besides
-              the usual SDKs you need the FMOD Engine and the pinned Asterwave
-              source, which is in a private repository. Without access to it,
-              the build stops.
+              There’s no packaged build yet, so you build it yourself. You need
+              a C++ toolchain, Python, the Vulkan SDK and .NET 10. Audio is built
+              into the engine, so there’s nothing else to install.
+            </p>
+            <p className="setup-note">
+              The dev branch still asks for FMOD until pull request 36 merges.
+              To build the version described here today, clone{" "}
+              <code>feature/lucky-merge</code> instead.
             </p>
             <ul className="requirements" role="list">
               <li>Visual Studio 2022 or 2026</li>
               <li>Python 3.9+</li>
               <li>Vulkan SDK 1.4.335</li>
-              <li>.NET SDK 9</li>
-              <li>FMOD Engine 2.03</li>
-              <li>Asterwave access</li>
+              <li>.NET SDK 10</li>
             </ul>
             <div className="split-links">
               <a href="/docs/getting-started.html" className="text-link">
