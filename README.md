@@ -33,7 +33,7 @@ In Windows environments where Turbopack cannot create worker processes, use `npm
 - Responsive company and product pages, including mobile navigation.
 - A data-driven product list (`lib/products.ts`) with a per-product accent colour set by `data-product`.
 - Persistent dark and light themes, with a dark default.
-- A project-board roadmap and keyboard-accessible setup tabs.
+- The LuxEngine roadmap, rendered from the org project board, and keyboard-accessible setup tabs.
 - Copyable setup commands with a selection fallback when clipboard access is unavailable.
 - Three real LuxEngine screenshots with keyboard-accessible view selection and a full-size viewer supporting Escape to close.
 - Locally optimized screenshots; no analytics or added external runtime services.
@@ -56,6 +56,18 @@ Tailwind v4 maps the light/dark color and font variables to utilities. Base styl
 Edit Markdown pages in `documentation/docs/` and navigation in `documentation/mkdocs.yml`. Run `npm run docs:serve` for an auto-reloading docs preview, or `npm run docs:build` for a strict link-checked build. The website's normal development and production builds generate docs into `public/docs/` automatically.
 
 The [documentation maintainer guide](documentation/README.md) explains the setup and hosting. Vercel installs the Python dependencies before building the website; the docs publish with that same deployment at https://www.starbounded.com/docs/.
+
+## Roadmap
+
+The roadmap on `/lux` renders `lib/roadmap.json`, a snapshot of the [LuxEngine project board](https://github.com/orgs/starbounded-dev/projects/3). GitHub only serves Projects through GraphQL, which always needs a token, so the board is saved and committed rather than fetched during the build.
+
+After moving cards on the board, refresh the snapshot and commit it:
+
+```bash
+npm run roadmap:sync
+```
+
+The script uses `GITHUB_TOKEN` if it is set, otherwise `gh auth token`. The token needs the `read:project` scope (`gh auth refresh -s read:project`). Column rules live in `lib/roadmap.ts`: wanted is P1 and Todo in the 2027.1 milestone, must-haves are the "2027.1 M*" issues, and shipped is every Done item, newest first.
 
 ## Screenshots
 

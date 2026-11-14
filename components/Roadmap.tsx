@@ -1,76 +1,18 @@
-// A project board in the style of a GitHub Projects board view: work moves
-// left to right as it lands. The three planned columns mirror "Active
-// development" and "Next up" in the LuxEngine README; the last column is
-// summarized from "What works today" in the same README.
+import { Arrow } from "./Icons";
+import {
+  board,
+  columns,
+  cuts,
+  formatDate,
+  type RoadmapCard,
+} from "@/lib/roadmap";
+
+// The LuxEngine project board, rendered from the snapshot in lib/roadmap.json.
+// Work moves left to right as it lands, the same way it does on the board.
 
 type ColumnState = "planned" | "next" | "active" | "done";
 
-type Card = {
-  title: string;
-  labels: readonly string[];
-};
-
-type Column = {
-  id: string;
-  name: string;
-  state: ColumnState;
-  theme: string;
-  text: string;
-  cards: readonly Card[];
-};
-
-const columns: readonly Column[] = [
-  {
-    id: "later",
-    name: "Further out",
-    state: "planned",
-    theme: "Streaming and effects",
-    text: "Work that makes larger scenes practical, and the effects an engine is expected to have.",
-    cards: [
-      { title: "Asset streaming and hardened async uploads", labels: ["Assets"] },
-      { title: "A particle system", labels: ["Effects"] },
-    ],
-  },
-  {
-    id: "next",
-    name: "Up next",
-    state: "next",
-    theme: "Animation and terrain",
-    text: "The shader side of animated meshes exists. The importer and playback come next, then the terrain system that is still on a branch.",
-    cards: [
-      { title: "Skeletal animation, from import to playback", labels: ["Animation"] },
-      { title: "Merging the procedural terrain system", labels: ["Terrain"] },
-      { title: "A broader C# scripting API for physics and rendering", labels: ["Scripting"] },
-    ],
-  },
-  {
-    id: "now",
-    name: "In progress",
-    state: "active",
-    theme: "Performance, measured",
-    text: "A profiling-led pass over the renderer. Baseline first, then remove the waste the numbers point to.",
-    cards: [
-      { title: "Render-graph compile caching", labels: ["Renderer"] },
-      { title: "Fewer per-frame allocations on the submission path", labels: ["Renderer"] },
-      { title: "Link-time-optimized distribution builds", labels: ["Build"] },
-    ],
-  },
-  {
-    id: "done",
-    name: "Works today",
-    state: "done",
-    theme: "In the engine now",
-    text: "The systems you get when you build from source. The list above has the detail.",
-    cards: [
-      { title: "Deferred PBR renderer with a render graph", labels: ["Renderer"] },
-      { title: "Docking editor with undo, gizmos, and a profiler", labels: ["Editor"] },
-      { title: "ECS scenes, prefabs, and Play in the editor", labels: ["Scenes"] },
-      { title: "3D physics on Jolt, 2D physics on Box2D", labels: ["Physics"] },
-      { title: "C# scripts with hot reload", labels: ["Scripting", "Partial"] },
-      { title: "Asset packs and a standalone runtime", labels: ["Assets"] },
-    ],
-  },
-];
+const SHIPPED_SHOWN = 6;
 
 function StateIcon({ state }: { state: ColumnState }) {
   if (state === "done") {
@@ -106,60 +48,199 @@ function StateIcon({ state }: { state: ColumnState }) {
   );
 }
 
-export function Roadmap() {
+function Progress({ total, done }: { total: number; done: number }) {
   return (
-    <div
-      className="board"
-      role="region"
-      aria-label="LuxEngine project board"
-      tabIndex={0}
-    >
-      {columns.map((column) => {
-        const headingId = `board-${column.id}`;
-        return (
-          <section
-            key={column.id}
-            className="board-column"
-            data-state={column.state}
-            aria-labelledby={headingId}
-          >
-            <header className="board-column-head">
-              <h3 id={headingId}>
-                <StateIcon state={column.state} />
-                <span>{column.name}</span>
-                <span
-                  className="board-count"
-                  aria-label={`${column.cards.length} items`}
-                >
-                  {column.cards.length}
-                </span>
-              </h3>
-              <p className="board-theme">{column.theme}</p>
-              <p className="board-text">{column.text}</p>
-            </header>
-            <ul className="board-cards" role="list">
-              {column.cards.map((card) => (
-                <li key={card.title} className="board-card">
-                  <StateIcon state={column.state} />
-                  <div>
-                    <p>{card.title}</p>
-                    <ul className="board-labels" role="list" aria-label="Labels">
-                      {card.labels.map((label) => (
-                        <li
-                          key={label}
-                          className={label === "Partial" ? "partial" : undefined}
-                        >
-                          {label}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-        );
-      })}
+    <div className="board-progress">
+      <span className="board-progress-track" aria-hidden="true">
+        <span style={{ width: `${(done / total) * 100}%` }} />
+      </span>
+      <span>
+        {done} of {total} sub-issues done
+      </span>
     </div>
+  );
+}
+
+function Card({ card, state }: { card: RoadmapCard; state: ColumnState }) {
+  const body = (
+    <>
+      <StateIcon state={state} />
+      <div>
+        <p className="board-card-title">{card.title}</p>
+        {card.detail ? <p className="board-card-detail">{card.detail}</p> : null}
+        {card.progress ? <Progress {...card.progress} /> : null}
+        <ul className="board-labels" role="list" aria-label="Details">
+          {card.tag ? <li className="tag">{card.tag}</li> : null}
+          {card.size ? <li>Size {card.size}</li> : null}
+          {card.date ? <li>{formatDate(card.date)}</li> : null}
+        </ul>
+      </div>
+    </>
+  );
+  return (
+    <li>
+      {card.url ? (
+        <a href={card.url} className="board-card">
+          {body}
+        </a>
+      ) : (
+        <div className="board-card">{body}</div>
+      )}
+    </li>
+  );
+}
+
+function CompactRow({ card }: { card: RoadmapCard }) {
+  return (
+    <li>
+      <a href={card.url ?? board.url} className="board-row">
+        <StateIcon state="planned" />
+        <span className="board-row-tag">{card.tag}</span>
+        <span>{card.title}</span>
+      </a>
+    </li>
+  );
+}
+
+type ColumnProps = {
+  id: string;
+  name: string;
+  state: ColumnState;
+  theme: string;
+  text: string;
+  count: number;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+};
+
+function Column({
+  id,
+  name,
+  state,
+  theme,
+  text,
+  count,
+  children,
+  footer,
+}: ColumnProps) {
+  const headingId = `board-${id}`;
+  return (
+    <section
+      className="board-column"
+      data-state={state}
+      data-column={id}
+      aria-labelledby={headingId}
+    >
+      <header className="board-column-head">
+        <h3 id={headingId}>
+          <StateIcon state={state} />
+          <span>{name}</span>
+          <span className="board-count" aria-label={`${count} items`}>
+            {count}
+          </span>
+        </h3>
+        <p className="board-theme">{theme}</p>
+        <p className="board-text">{text}</p>
+      </header>
+      <div className="board-column-body">
+        {children}
+        {footer}
+      </div>
+    </section>
+  );
+}
+
+export function Roadmap() {
+  const shipped = columns.shipped.slice(0, SHIPPED_SHOWN);
+  const moreShipped = columns.shipped.length - shipped.length;
+  return (
+    <>
+      <div
+        className="board"
+        role="region"
+        aria-label="LuxEngine project board"
+        tabIndex={0}
+      >
+        <Column
+          id="wanted"
+          name="Wanted"
+          state="planned"
+          theme="If time allows in 2027.1"
+          text="Wanted for the release, and the first things dropped if the must-haves run late."
+          count={columns.wanted.length}
+        >
+          <ul className="board-rows" role="list">
+            {columns.wanted.map((card) => (
+              <CompactRow key={card.key} card={card} />
+            ))}
+          </ul>
+        </Column>
+
+        <Column
+          id="must"
+          name="Must-haves"
+          state="next"
+          theme="Not started yet"
+          text="2027.1 does not ship without these. Each one is split into sub-issues on GitHub."
+          count={columns.mustTodo.length}
+        >
+          <ul className="board-cards" role="list">
+            {columns.mustTodo.map((card) => (
+              <Card key={card.key} card={card} state="next" />
+            ))}
+          </ul>
+        </Column>
+
+        <Column
+          id="progress"
+          name="In progress"
+          state="active"
+          theme="Being worked on now"
+          text="Someone is working on these right now. Each card links to where it stands."
+          count={columns.inProgress.length}
+        >
+          <ul className="board-cards" role="list">
+            {columns.inProgress.map((card) => (
+              <Card key={card.key} card={card} state="active" />
+            ))}
+          </ul>
+        </Column>
+
+        <Column
+          id="shipped"
+          name="Shipped"
+          state="done"
+          theme="Merged, newest first"
+          text="Pull requests and finished items from the board."
+          count={columns.shipped.length}
+          footer={
+            moreShipped > 0 ? (
+              <a href={board.url} className="board-more">
+                {moreShipped} older items on the board <Arrow diagonal />
+              </a>
+            ) : null
+          }
+        >
+          <ul className="board-cards" role="list">
+            {shipped.map((card) => (
+              <Card key={card.key} card={card} state="done" />
+            ))}
+          </ul>
+        </Column>
+      </div>
+      {cuts.length > 0 ? (
+        <p className="board-cuts">
+          Also on the board: {cuts.length} things to remove or hide before
+          2027.1:{" "}
+          {cuts.map((card, index) => (
+            <span key={card.key}>
+              {index > 0 ? (index === cuts.length - 1 ? ", and " : ", ") : null}
+              <a href={card.url ?? board.url}>{card.title}</a>
+            </span>
+          ))}
+          .
+        </p>
+      ) : null}
+    </>
   );
 }
