@@ -193,14 +193,49 @@ test("roadmap board renders the synced project board with links and counts", () 
   assert.ok(
     within(wanted).getByLabelText(`${roadmap.columns.wanted.length} items`),
   );
-  assert.equal(
-    within(must).getAllByRole("link").length,
-    roadmap.columns.mustTodo.length,
+  // Each must-have card links its title, plus one link per sub-issue.
+  const mustLinks = within(must).getAllByRole("link");
+  const subIssueLinks = roadmap.columns.mustTodo.reduce(
+    (sum, card) => sum + roadmap.subIssuesOf(card.number).length,
+    0,
   );
+  assert.equal(mustLinks.length, roadmap.columns.mustTodo.length + subIssueLinks);
   assert.ok(within(must).getAllByText(/of \d+ sub-issues done/).length > 0);
   for (const link of within(progress).getAllByRole("link")) {
     assert.match(link.getAttribute("href") ?? "", /^https:\/\/github\.com\//);
   }
+});
+
+test("roadmap board starts collapsed and expands to every item", async () => {
+  const user = userEvent.setup();
+  render(<Roadmap />);
+  const board = screen.getByRole("region", { name: "LuxEngine project board" });
+  const toggle = screen.getByRole("button", { name: /Show the whole board/ });
+  assert.equal(board.getAttribute("data-expanded"), "false");
+  assert.equal(toggle.getAttribute("aria-expanded"), "false");
+  assert.equal(toggle.getAttribute("aria-controls"), board.id);
+
+  // Collapsed: no column shows more than the limit outside data-extra.
+  for (const column of within(board).getAllByRole("region")) {
+    const visible = [...column.querySelectorAll(".board-rows > li, .board-cards > li")]
+      .filter((item) => !item.hasAttribute("data-extra"));
+    assert.ok(visible.length <= roadmap.COLLAPSED_PER_COLUMN);
+  }
+  const shown = [
+    roadmap.columns.wanted,
+    roadmap.columns.mustTodo,
+    roadmap.columns.inProgress,
+    roadmap.columns.shipped,
+  ].reduce((sum, list) => sum + Math.min(list.length, roadmap.COLLAPSED_PER_COLUMN), 0);
+  assert.ok(shown <= 4 * roadmap.COLLAPSED_PER_COLUMN);
+  assert.ok(screen.getByText(new RegExp(`^Showing ${shown} of \\d+\\.$`)));
+
+  await user.click(toggle);
+  assert.equal(board.getAttribute("data-expanded"), "true");
+  assert.equal(toggle.getAttribute("aria-expanded"), "true");
+  assert.equal(toggle.textContent, "Show less");
+  await user.click(toggle);
+  assert.equal(board.getAttribute("data-expanded"), "false");
 });
 
 test("mobile navigation dismisses with Escape, outside click, and desktop breakpoint", async () => {
