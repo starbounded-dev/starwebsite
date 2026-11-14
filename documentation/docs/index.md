@@ -2,10 +2,10 @@
 
 LuxEngine is a 3D game engine and editor from Starbounded, written in C++20 on Vulkan for Windows and Linux. These guides get you from a clean machine to a running editor, then explain what each part of the engine does and what it doesn't do yet.
 
-They follow the **`dev` branch**, which has the current code. The repository's default `master` branch still holds the older StarEngine project.
+The repository's default `master` branch still holds the older StarEngine project; ignore it.
 
 !!! note "Before you start"
-    Building LuxEngine currently needs the FMOD Engine SDK and read access to the private Asterwave repository. [Getting started](getting-started.md) explains why, and what to do if you don't have access.
+    You need the Vulkan SDK and .NET 10, and that's all: audio is built in. The newest work, which these guides describe, is on `feature/lucky-merge` until [pull request 36](https://github.com/starbounded-dev/LuxEngine/pull/36) merges into `dev`. [Getting started](getting-started.md) explains which branch to clone.
 
 <div class="grid cards" markdown>
 
@@ -29,13 +29,13 @@ They follow the **`dev` branch**, which has the current code. The repository's d
 
 - **Audio**
 
-    FMOD Studio for playback, Asterwave for acoustics, and See the Sound to check them.
+    A built-in engine on miniaudio, Sounds and a mixer authored in the editor, and Soundwave acoustics.
 
     [Audio →](audio.md)
 
 - **Scripting**
 
-    C# on .NET 9: a first script, the API you can reach, and what's missing.
+    C# on .NET 10: a first script, the API you can reach, and what's missing.
 
     [Scripting →](scripting.md)
 

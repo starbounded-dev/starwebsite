@@ -2,7 +2,7 @@
 
 The editor is one native window drawn with Dear ImGui (the docking branch) on top of the engine's Vulkan renderer. Every panel is a small class registered with a panel manager, which remembers which panels you had open. This page covers what you'll use every day. The engine repository has the full [editor manual](https://github.com/starbounded-dev/LuxEngine/tree/dev/docs/Editor), with file and line references for each part.
 
-These are captures of a development build from the [`dev` branch](https://github.com/starbounded-dev/LuxEngine/tree/dev). Layouts and panel names can change between revisions.
+These are captures of a development build. The panel list below follows the newest work on [`feature/lucky-merge`](https://github.com/starbounded-dev/LuxEngine/tree/feature/lucky-merge), which is on its way into `dev`. Layouts and panel names can change between revisions.
 
 ![LuxEngine editor showing the Sponza scene, hierarchy, rendering settings, properties panel, and content browser](assets/images/lux-editor-sponza.webp)
 
@@ -91,11 +91,14 @@ The command palette is a fuzzy search over every menu action and panel. Type to 
 | Material Editor | no | Opens by itself when you open a material. See below. |
 | Renderer Debugger | no | GPU time per render pass, with a frame history. |
 | Profiler | no | CPU frame time against a 60 fps budget, plus the per-pass GPU timings. |
-| Audio Debugger | no | The live audio stack. See [Audio](audio.md). |
+| Sound Editor | no | Builds a Sound from clips and containers. Opens when you open a Sound. See [Audio](audio.md#make-a-sound). |
+| Audio Mixer | no | Buses, effects, VCAs, the reverb return, snapshots, and the scene's Sound Banks. See [Audio](audio.md#the-audio-mixer). |
+| Audio Debugger | no | The live audio stack. See [Audio](audio.md#the-audio-debugger). |
 | History | no | The undo stack, so you can see where you are in it. |
 | Asset Manager | no | Every asset the project knows about, with its type and source path. |
 | Project Settings | no | Physics layers, scripting, renderer defaults, audio and quality tiers for this project. |
 | Application Settings | no | Editor-wide settings such as VSync and the target frame rate. |
+| Help | no | The offline manual and the generated C# API reference. Press **F1**, or use the **?** button on a component's section. |
 
 ## Undo and redo
 

@@ -64,9 +64,11 @@ Use **Nsight Graphics** on NVIDIA hardware when you need GPU occupancy and stall
 The engine has regression suites that run without a window, a GPU device or a sound card:
 
 ```bash
-python tests/audio/run.py
-python tests/audio/run_managed.py
-python tests/audio/run_sdk_layout.py
+cmake -S tests/audio/native -B bin/native-audio-tests
+cmake --build bin/native-audio-tests
+ctest --test-dir bin/native-audio-tests        # audio, rendered offline with no device
+python tests/audio/run.py                      # Linux: streams, packs, contacts, occlusion
+python tests/audio/run_managed.py              # the C# audio bindings
 python tests/rendering/run_shadow_shader.py
 python tests/runtime/run_resources.py
 ```

@@ -15,7 +15,7 @@ There are two asset managers behind one interface. The editor's reads source fil
 | Materials | `.lmat` material assets, edited in the Material Editor. |
 | Scenes and prefabs | YAML files. |
 | Scripts | C# source, built into the project's script assembly. |
-| Audio | FMOD Studio banks, built from your `.fspro`. See [Audio](audio.md). |
+| Audio | `.wav`, `.ogg`, `.mp3` and `.flac` files become Audio assets. You build Sounds (`.lsound`) and Sound Banks (`.lbank`) from them in the editor. See [Audio](audio.md). |
 
 Meshes have **levels of detail**, which the Scene Renderer's LOD settings control. Shaders compile to SPIR-V, and a reflection cache keeps shader hot reload fast.
 
@@ -23,7 +23,7 @@ Meshes have **levels of detail**, which the Scene Renderer's LOD settings contro
 
 For a runtime build, the project is packed into binary files instead of loose assets:
 
-- an **asset pack**, with every asset the game uses, FMOD banks included;
+- an **asset pack**, with every asset the game uses, Sounds, banks and audio clips included. Audio is read in place from the pack, so long music streams straight from it;
 - a **shader pack**, with the compiled shaders.
 
 The player loads only from these, so a shipped game doesn't need the source files or a shader compiler.
@@ -50,7 +50,7 @@ On Linux you can wrap the editor or the player in an AppImage. It bundles the bi
 ## Before you ship anything
 
 - **Check Audio Validation** in the Audio Debugger. It reports the problems that make an exported game silent.
-- **Licences.** FMOD and Asterwave are inside every exported game. LuxEngine's Apache-2.0 licence covers only LuxEngine's own code. Read FMOD's terms, and the licence and provenance files in the Asterwave checkout, before you distribute a build. Asterwave is linked statically, so it can't be removed by deleting a DLL.
+- **Licences.** LuxEngine is Apache-2.0. The libraries it's built on keep their own licences; the engine's [NOTICE](https://github.com/starbounded-dev/LuxEngine/blob/feature/lucky-merge/NOTICE) lists them. A licence audit before 2027.1 is on the roadmap (X9).
 - **Use `dist`.** The `dist` configuration has link-time optimisation and leaves out Tracy and Aftermath.
 
 ## What's missing

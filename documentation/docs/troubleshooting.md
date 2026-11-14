@@ -1,6 +1,6 @@
 # Troubleshooting
 
-These notes target the public **`dev` branch**, matching the [getting started guide](getting-started.md). Check your branch first: `master` contains the older StarEngine / StarEditor project and uses a different setup.
+These notes match the [getting started guide](getting-started.md), which follows the newest work on `feature/lucky-merge` (on its way into `dev`). Check your branch first: `master` contains the older StarEngine / StarEditor project and uses a different setup.
 
 ## There is no `Lux.sln` or `Editor` project
 
@@ -11,7 +11,7 @@ git branch --show-current
 git rev-parse --short HEAD
 ```
 
-The newer public `dev` branch generates `Lux.sln` for VS2022 or `Lux.slnx` for VS2026. Its startup application is `Editor`. If you see `StarEngine.sln` and `StarEditor`, you have the older tree. Use a separate `dev` checkout if you want to keep that existing work.
+Current LuxEngine generates `Lux.sln` for VS2022 or `Lux.slnx` for VS2026. Its startup application is `Editor`. If you see `StarEngine.sln` and `StarEditor`, you have the older tree. Use a separate `dev` checkout if you want to keep that existing work.
 
 If no solution was generated, correct setup's first reported error and rerun `.\scripts\Setup.bat` from the repository root.
 
@@ -42,27 +42,21 @@ It should be the actual SDK directory. Rerun setup after installation finishes. 
 
 The Windows script checks for `Lib\shaderc_sharedd.lib` under `VULKAN_SDK`. Install the matching SDK's shader debug libraries to build Debug. Start with **Release** while resolving a Debug-only library issue.
 
-## A FMOD file is missing at generation
+## An Audio Source is silent and logs "has an FMOD event but no Sound"
 
-FMOD Engine is mandatory on `dev`; there's no fallback audio backend. The generation error names the exact missing file.
+The scene was made when LuxEngine used FMOD. FMOD references never play now. Assign a Sound to the source; the inspector still shows the old event so you know what it was. To clear every old reference at once, use **Project Settings → Audio → Legacy FMOD Data**; see [Audio](audio.md#projects-made-with-fmod).
 
-- `LUX_FMOD_SDK` must point to the folder that contains `api/`, with both the Core and Studio APIs.
-- Supply the package for the platform you're building. Windows import libraries don't satisfy a Linux build.
-- Fix the package or the path, then regenerate.
+## A Sound plays late or stalls a frame
 
-## Asterwave is missing or at the wrong revision
+The Sound isn't in a loaded Sound Bank, so it loads the first time it plays. Add it to a bank and list that bank under **Scene Sound Banks** in the Audio Mixer. Debug builds warn about this once, and the Audio Debugger's validation lists Sounds in no bank.
 
-Run `python scripts/FetchAsterwave.py`, or set `LUX_ASTERWAVE_ROOT` to a checkout of the pinned revision. Check it with `python scripts/FetchAsterwave.py --check`, then regenerate.
+## The build asks for FMOD or Asterwave
 
-If the fetch fails with an authentication or "repository not found" error, your Git credentials can't read the private `starbounded-dev/asterwave` repository. There's no public substitute today; see the note in [Getting started](getting-started.md). Neither FMOD nor Asterwave comes with a recursive clone, and neither should be committed to your own repository.
-
-## The editor starts but shows no banks or events
-
-Open **Project Settings → Audio**. The `.fspro` path is relative to `Assets/`, and **Bank Output is a folder** (`Build/Desktop`), not a `.bank` file.
+You're on a branch from before the built-in audio engine, such as `dev` before pull request 36 merges. Clone or switch to `feature/lucky-merge`, which needs neither; see [Getting started](getting-started.md).
 
 ## .NET host is missing, or `NETSDK1004` appears
 
-If the editor stops at startup with a `hostfxr` or "runtime not found" error, you have .NET 10 (or 8) instead of 9. Coral, the scripting host, hard-codes major version 9, and having a newer one installed doesn't help. Install **.NET SDK 9** next to it. On Linux, distro `dotnet-sdk` metapackages now install 10, so ask for `dotnet-sdk-9.0` by name.
+If the editor stops at startup with a `hostfxr` or "runtime not found" error, you have an older .NET (8 or 9) instead of 10. Install the **.NET 10 SDK**. On Linux the package is `dotnet-sdk` on Arch and `dotnet-sdk-10.0` on Debian, Ubuntu and Fedora.
 
 ```powershell
 dotnet --list-sdks
@@ -111,7 +105,7 @@ On Linux, use `./scripts/Linux-Run.sh release`. It prepares the Vulkan and libra
 
 The file-dialog library (NFD-Extended) needs the `gtk+-3.0` development files. Install them from the [package list for your distribution](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#building-on-linux).
 
-Older guides mentioned a glibc 2.43 requirement. That came from the prebuilt Vercidium Audio binary, which is gone: Asterwave now builds from source with your own toolchain. Ubuntu 26.04 is what CI uses; older distributions haven't been checked.
+Older guides mentioned a glibc 2.43 requirement. That came from a prebuilt audio library the engine no longer uses; audio is now compiled from source with your own toolchain. Ubuntu 26.04 is what CI uses; older distributions haven't been checked.
 
 ## `llvm-ar: not found` in a `dist` build
 

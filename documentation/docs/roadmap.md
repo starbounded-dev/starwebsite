@@ -25,7 +25,7 @@ These 13 issues block the release. Each one is split into sub-issues, and the bo
 | M4 | **C# API completion.** Physics queries, scene loading, time and maths types, entity active flags. | L |
 | M5 | **Beam basics.** Never lose work, C# build errors inline, click an error to open the line. | L |
 | M6 | **Export that stands alone.** Works from the release zip with no source tree, a lean layout, no .NET install for players, and the game's name and icon. | L |
-| M7 | **.NET 10.** .NET 9 is leaving support. Done on a branch. | M |
+| M7 | **.NET 10.** .NET 9 is leaving support. Done on `feature/lucky-merge`; lands with pull request 36. | M |
 | M8 | **Project format version.** Projects made in 2027.1 have to open in 2027.2. | M |
 | M9 | **AMD and Intel GPUs.** Every measurement so far is from one NVIDIA card. | M |
 | M10 | **Two sample games** made only with the release zip, one 3D and one 2D. They're the acceptance test. | L |
