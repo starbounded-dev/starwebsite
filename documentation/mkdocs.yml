@@ -23,19 +23,21 @@ theme:
     - search.suggest
     - content.action.edit
     - content.code.copy
+  # Dark first: Material opens on the first scheme, and dark is the house
+  # default on starbounded.com too. A reader's own choice is remembered.
   palette:
-    - scheme: default
-      primary: custom
-      accent: deep purple
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
     - scheme: slate
       primary: custom
       accent: deep purple
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+    - scheme: default
+      primary: custom
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
 
 nav:
   - Welcome: index.md

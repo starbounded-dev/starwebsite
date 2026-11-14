@@ -14,13 +14,22 @@
   --md-code-bg-color: #eae7f1;
 }
 
+/* Same night palette as app/globals.css, with LuxEngine violet as the accent. */
 [data-md-color-scheme="slate"] {
-  --md-hue: 260;
-  --md-default-bg-color: #191620;
-  --md-default-fg-color: #eeeaf6;
-  --md-typeset-a-color: #bda0ed;
-  --md-accent-fg-color: #bda0ed;
+  --md-hue: 285;
+  --md-default-bg-color: oklch(0.158 0.012 285);
+  --md-default-fg-color: oklch(0.96 0.008 95);
+  --md-default-fg-color--light: oklch(0.74 0.016 285);
+  --md-default-fg-color--lighter: oklch(0.74 0.016 285 / 0.6);
+  --md-default-fg-color--lightest: oklch(0.96 0.008 95 / 0.1);
+  --md-code-bg-color: oklch(0.125 0.012 285);
+  --md-code-fg-color: oklch(0.96 0.008 95);
+  --md-typeset-a-color: oklch(0.8 0.12 297);
+  --md-accent-fg-color: oklch(0.86 0.1 297);
+  --md-primary-fg-color: oklch(0.176 0.013 285);
+  --md-footer-bg-color: oklch(0.176 0.013 285);
 }
+[data-md-color-scheme="slate"] .md-footer { background: oklch(0.176 0.013 285); }
 
 .md-header { box-shadow: none; border-bottom: 1px solid #ffffff18; }
 .md-header__button.md-logo img { width: 1.65rem; height: 1.65rem; border-radius: .35rem; }
