@@ -21,7 +21,7 @@ export const screenshots = [
     scene: "RenderFeatures",
     alt: "LuxEngine rendering test with reflective surfaces, colored lights, and glowing emissive materials",
     caption:
-      "A rendering test scene with lights, reflections, and emissive materials. Small tests help us see what works and what needs another look.",
+      "The RenderFeatures test scene: area lights, reflections and emissive materials. It was made alongside the render features work, to check each phase as it landed.",
   },
   {
     src: "/images/lux-material-editor.webp",
@@ -29,7 +29,7 @@ export const screenshots = [
     scene: "RF_Emit_Cool",
     alt: "LuxEngine material editor showing surface, emission, and texture settings with an emissive sphere preview",
     caption:
-      "The material editor, with a preview beside the surface, emission, and texture settings. This is where we work on how things look.",
+      "The material editor, with a live preview next to the surface, emission and texture settings.",
   },
   {
     src: "/images/lux-sponza-vaults.webp",

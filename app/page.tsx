@@ -18,9 +18,10 @@ export default function Home() {
           <div className="wrap hero-inner" data-rise>
             <h1 id="home-title">Tools for people who build worlds.</h1>
             <p className="hero-lede">
-              Starbounded is an independent software company. Our first product
-              is LuxEngine, an open-source 3D game engine and editor. More are
-              in the works.
+              Starbounded is a small software company in Canada. Our first
+              product is LuxEngine, a 3D game engine and editor written in C++20
+              on Vulkan, with its source on GitHub. Others will show up here
+              once they exist.
             </p>
             <div className="button-row">
               <Link href="/lux" className="button button-primary">
@@ -71,30 +72,42 @@ export default function Home() {
             <div className="flagship-copy">
               <h2>LuxEngine is where we start.</h2>
               <p className="lede">
-                The best way to understand an engine is to build one, so we did.
-                LuxEngine has a deferred renderer, physics, C# scripting, and a
-                full editor, and every line of it is open to read.
+                You learn how an engine works by building one, so that’s what
+                we did. LuxEngine renders, simulates, plays sound and edits
+                scenes, and you can open any of those systems and read how it
+                works.
               </p>
               <dl className="feature-list">
                 <div>
                   <dt>Renderer</dt>
                   <dd>
-                    Deferred, clustered PBR on Vulkan, with a render graph,
-                    cascaded shadows, and screen-space reflections.
+                    Deferred, clustered PBR on Vulkan. A render graph skips any
+                    pass whose feature is switched off, so an unused effect
+                    costs nothing.
+                  </dd>
+                </div>
+                <div>
+                  <dt>Audio</dt>
+                  <dd>
+                    A built-in audio engine on miniaudio, with Sounds and a
+                    mixer you author in the editor. Soundwave, the engine’s own
+                    acoustics, muffles sound behind walls, carries it around
+                    corners and gives each room its reverb.
                   </dd>
                 </div>
                 <div>
                   <dt>Editor</dt>
                   <dd>
-                    A docking workspace with a scene hierarchy, content browser,
-                    material editor, and undo history.
+                    A docking editor with snapshot undo and redo, a command
+                    palette, a profiler, and a material editor.
                   </dd>
                 </div>
                 <div>
-                  <dt>Runtime</dt>
+                  <dt>Gameplay</dt>
                   <dd>
-                    Jolt physics, C# scripts on .NET 9, and a standalone player
-                    for packaged projects.
+                    Jolt for 3D physics, Box2D for 2D, C# scripts on .NET 10
+                    with hot reload, and a player that runs packaged projects
+                    without the editor.
                   </dd>
                 </div>
               </dl>
@@ -146,15 +159,16 @@ export default function Home() {
             <div>
               <dt>Open by default</dt>
               <dd>
-                LuxEngine’s source, docs, and roadmap are all public. A question
-                counts as a contribution.
+                LuxEngine’s source, docs and roadmap are public, down to every
+                issue planned for the next release. Asking a question counts as
+                contributing.
               </dd>
             </div>
             <div>
               <dt>Understandable on purpose</dt>
               <dd>
-                We would rather ship a system you can follow than one that only
-                looks finished. The code is meant to be read.
+                We’d rather ship a system you can follow than one that only
+                looks finished. The code is written to be read.
               </dd>
             </div>
             <div>
@@ -172,8 +186,9 @@ export default function Home() {
             <Bounds />
             <h2 id="closing-title">Start with the engine.</h2>
             <p>
-              LuxEngine builds from source on Windows and Linux. Clone it, open
-              the editor, and change something.
+              LuxEngine builds from source on Windows and Linux. You need the
+              Vulkan SDK and .NET 10, and audio is built in, so there’s nothing
+              else to install.
             </p>
             <div className="button-row">
               <Link href="/lux#setup" className="button button-primary">

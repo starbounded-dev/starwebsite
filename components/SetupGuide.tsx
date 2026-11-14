@@ -16,22 +16,22 @@ const steps = [
     id: "clone",
     title: "Clone the source",
     description:
-      "Clone the current dev branch, then change into the LuxEngine folder.",
+      "Clone the dev branch with its submodules. Install Visual Studio, Python 3.9+, the Vulkan SDK 1.4.335 and the .NET 10 SDK first.",
     command:
       "git clone --branch dev --recursive https://github.com/starbounded-dev/LuxEngine.git",
   },
   {
     id: "setup",
-    title: "Set up dependencies",
+    title: "Generate the solution",
     description:
-      "From the LuxEngine folder, check prerequisites and generate the solution. The docs cover the required SDKs.",
+      "From the LuxEngine folder, Setup.bat checks the Vulkan SDK, pulls submodules and Git LFS assets, and writes Lux.sln (or Lux.slnx for Visual Studio 2026).",
     command: ".\\scripts\\Setup.bat",
   },
   {
     id: "build",
     title: "Build the editor",
     description:
-      "In a Visual Studio Developer terminal, build Release, then set Editor as the startup project in Lux.sln.",
+      "In a Visual Studio Developer terminal, build Release, then set Editor as the startup project and run it. /restore is needed for the C# projects.",
     command:
       'MSBuild Lux.sln /restore /m /p:Configuration=Release /p:Platform="Mixed Platforms"',
   },

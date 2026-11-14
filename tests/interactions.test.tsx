@@ -42,7 +42,7 @@ test("setup tabs support arrows, Home/End, matching panels, and unique IDs acros
   assert.equal(document.activeElement?.getAttribute("aria-selected"), "true");
   assert.match(
     document.activeElement?.textContent ?? "",
-    /Set up dependencies/,
+    /Generate the solution/,
   );
   const panelId = document.activeElement?.getAttribute("aria-controls");
   assert.match(
@@ -81,7 +81,7 @@ test("copy feedback belongs to the selected command, including rejected clipboar
   assert.match(copied, /^git clone --branch dev/);
   assert.equal(screen.getByRole("status").textContent, "Copied to clipboard");
   assert.ok(screen.getByRole("button", { name: "Command copied" }));
-  await user.click(screen.getByRole("tab", { name: /Set up dependencies/ }));
+  await user.click(screen.getByRole("tab", { name: /Generate the solution/ }));
   assert.match(screen.getByRole("status").textContent ?? "", /Step 2 of 3/);
   Object.defineProperty(navigator.clipboard, "writeText", {
     configurable: true,
@@ -94,7 +94,10 @@ test("copy feedback belongs to the selected command, including rejected clipboar
     screen.getByRole("status").textContent ?? "",
     /Command selected/,
   );
-  assert.equal(window.getSelection()?.toString(), ".\\scripts\\Setup.bat");
+  assert.equal(
+    window.getSelection()?.toString(),
+    ".\\scripts\\Setup.bat",
+  );
 });
 
 test("late clipboard completion cannot overwrite another step's feedback", async () => {
