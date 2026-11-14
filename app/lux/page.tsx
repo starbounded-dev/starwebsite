@@ -9,6 +9,13 @@ import { ScenePreview } from "@/components/ScenePreview";
 import { Roadmap } from "@/components/Roadmap";
 import { SetupGuide } from "@/components/SetupGuide";
 import { luxRepoUrl } from "@/lib/navigation";
+import {
+  RELEASE,
+  board,
+  formatDate,
+  releaseCounts,
+  syncedAt,
+} from "@/lib/roadmap";
 
 export const metadata: Metadata = {
   title: "LuxEngine",
@@ -145,17 +152,23 @@ export default function LuxPage() {
           <div className="wrap section">
             <div className="section-head board-head">
               <div>
-                <h2>What comes next.</h2>
+                <h2>The road to {RELEASE}.</h2>
                 <p>
-                  Where the work stands, as a project board. Items move right as
-                  they land, and the order changes as we learn.
+                  {RELEASE} is done when someone new to the engine can download
+                  one zip, install only the .NET SDK, and make and export a small
+                  3D game and a small 2D game on Windows and on Linux: an
+                  animated character in a lit level, a menu and a HUD, sound,
+                  saved progress, and rebindable controls.
+                </p>
+                <p className="board-sync">
+                  {releaseCounts.issues} issues in the {RELEASE} milestone:{" "}
+                  {releaseCounts.mustHaves} must-haves, {releaseCounts.wanted}{" "}
+                  wanted, {releaseCounts.cuts} removals. Synced from the project
+                  board on <time dateTime={syncedAt}>{formatDate(syncedAt)}</time>.
                 </p>
               </div>
-              <a
-                href="https://app.milanote.com/1VLFym1ub26A5N?p=uYsX1JOqo0h"
-                className="text-link"
-              >
-                Open the full roadmap <Arrow diagonal />
+              <a href={board.url} className="text-link">
+                Open the project board <Arrow diagonal />
               </a>
             </div>
             <Roadmap />

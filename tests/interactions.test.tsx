@@ -13,6 +13,7 @@ import userEvent from "@testing-library/user-event";
 import { SetupGuide } from "../components/SetupGuide";
 import { ScenePreview } from "../components/ScenePreview";
 import { Roadmap } from "../components/Roadmap";
+import * as roadmap from "../lib/roadmap";
 import { MobileNav } from "../components/MobileNav";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { InteractionProvider } from "../components/InteractionProvider";
@@ -174,7 +175,7 @@ test("gallery keys follow orientation; the viewer traps focus, browses, closes, 
   assert.equal(document.activeElement, opener);
 });
 
-test("roadmap board exposes labelled columns with item counts", () => {
+test("roadmap board renders the synced project board with links and counts", () => {
   render(<Roadmap />);
   const board = screen.getByRole("region", { name: "LuxEngine project board" });
   assert.equal(board.getAttribute("tabindex"), "0");
@@ -183,14 +184,19 @@ test("roadmap board exposes labelled columns with item counts", () => {
     columns.map((column) =>
       within(column).getByRole("heading").textContent?.replace(/\d+$/, ""),
     ),
-    ["Further out", "Up next", "In progress", "Works today"],
+    ["Wanted", "Must-haves", "In progress", "Shipped"],
   );
-  for (const column of columns) {
-    const cards = within(column).getAllByRole("listitem").filter(
-      (item) => item.classList.contains("board-card"),
-    );
-    assert.ok(cards.length > 0);
-    assert.ok(within(column).getByLabelText(`${cards.length} items`));
+  const [wanted, must, progress] = columns;
+  assert.ok(
+    within(wanted).getByLabelText(`${roadmap.columns.wanted.length} items`),
+  );
+  assert.equal(
+    within(must).getAllByRole("link").length,
+    roadmap.columns.mustTodo.length,
+  );
+  assert.ok(within(must).getAllByText(/of \d+ sub-issues done/).length > 0);
+  for (const link of within(progress).getAllByRole("link")) {
+    assert.match(link.getAttribute("href") ?? "", /^https:\/\/github\.com\//);
   }
 });
 
