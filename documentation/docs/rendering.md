@@ -1,4 +1,43 @@
-# Looking at rendering changes
+# Rendering and materials
+
+LuxEngine renders with **Vulkan** through NVIDIA's [NRI](https://github.com/NVIDIA-RTX/NRI) abstraction. Only the Vulkan backend is built: there's no DirectX, Metal or OpenGL. Building needs the Vulkan 1.4 SDK, but the engine only needs a Vulkan 1.2 capable driver to run.
+
+## What the renderer does
+
+Sources: the "What works today" section of the [engine README](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#what-works-today) and the render features merged into `dev` in October 2026 (PR 35).
+
+**The frame.** Opaque geometry goes into a G-buffer, and lighting is computed in a deferred pass. Point and spot lights are culled per froxel cluster first, so each pixel only shades the lights that can reach it. Transparent surfaces draw afterwards in a separate forward pass, with glass refraction; two-sided transparents draw their back faces, then their front faces. A depth-only prepass runs first for opaque draws.
+
+**The render graph.** Passes are declared in a render graph, which reuses scratch resources between passes and skips any pass whose feature is off. That's deliberate: an effect you've disabled should cost nothing.
+
+**Lights.** Point, spot and directional lights, plus **area lights**: rect, disk, sphere and tube, shaded with Linearly Transformed Cosines. Lights use physical units.
+
+**Shadows.** Cascaded shadow maps for the sun (2K by default) and shadow maps for spot lights. Cut-out materials cast alpha-tested shadows.
+
+**Sky and ambient light.** A Preetham sky, or an HDR environment map converted to a cubemap with irradiance and prefiltered mips.
+
+**Post-processing.** GTAO for ambient occlusion, screen-space reflections, FFT convolution bloom (which replaced the older mip-chain bloom, with glare kernel settings), depth of field, and SMAA for anti-aliasing. A hierarchical depth buffer feeds occlusion culling and SSR.
+
+**Exposure and tonemapping.** Exposure can be a manual multiplier, a manual EV100, a physical camera (aperture, shutter speed and ISO) or histogram auto-exposure. Tonemapping is ACES or AgX.
+
+**Materials.** The Material Editor edits surface, emission, translucency, texture maps and UVs; see [the editor guide](editor.md#looking-at-a-material). Materials can be cut out (alpha-tested, with alpha coverage kept at every mip) or two-sided, and they support diffuse transmission, so light passes through thin surfaces like leaves (glTF's `KHR_materials_diffuse_transmission`).
+
+**GPU-driven pieces.** Scene data lives in GPU buffers, and meshes are culled in a compute pass. Each pass records its own GPU time; see [Profiling](profiling.md).
+
+**2D.** A batch renderer draws sprites, circles, lines and MSDF text, for 2D games and for world-space text in 3D.
+
+**In the editor.** Selection outlines (jump flood), a depth-tested collider view, wireframe, G-buffer and AO debug views, a light complexity view, and an infinite grid.
+
+### What it doesn't do
+
+- **No temporal techniques.** There's no TAA and no temporal upscaler, and that's a standing rule for the engine, not a gap: anti-aliasing is SMAA. Sky atmosphere and volumetric clouds were removed during a renderer simplification pass.
+- **No ray tracing and no global illumination** beyond the sky light. Both are planned to restart from scratch after 2027.1.
+- **No fog, decals or reflection probes yet.** All three are wanted for 2027.1.
+- **Tested on one GPU so far.** Most recorded measurements come from an NVIDIA RTX 4070 Ti. Testing on AMD and Intel is must-have M9 for 2027.1.
+
+Area light shadows and much of the material work are built but haven't all been run in the editor yet; the 2027.1 hardening pass (M1) covers them. If something looks wrong there, report it.
+
+## Looking at rendering changes
 
 Small scenes make rendering changes easier to understand. A simple arrangement of lights, materials, and surfaces can reveal a problem that is hard to isolate in a larger scene.
 

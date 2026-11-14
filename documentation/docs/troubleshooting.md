@@ -28,7 +28,7 @@ Setup uses that same interpreter to install its helper packages. If Windows open
 
 ## Vulkan SDK is missing or rejected
 
-The Windows `dev` script checks that `VULKAN_SDK` points to a **1.4.x** installation and currently offers the **1.4.341.1** installer. Its Linux counterpart downloads **1.4.335.0** by default. Use the check from the script in your checkout when versions change.
+The README pins **Vulkan SDK 1.4.335.0**. The Windows setup script checks that `VULKAN_SDK` points to a 1.4 installation and offers the installer if it doesn't; the Linux script downloads 1.4.335.0 into `Core/vendor/VulkanSDK/`. If the versions in your checkout differ, the scripts there are the authority.
 
 After installing the SDK, open a new terminal and inspect:
 
@@ -42,19 +42,27 @@ It should be the actual SDK directory. Rerun setup after installation finishes. 
 
 The Windows script checks for `Lib\shaderc_sharedd.lib` under `VULKAN_SDK`. Install the matching SDK's shader debug libraries to build Debug. Start with **Release** while resolving a Debug-only library issue.
 
-## `Required audio SDK file missing`
+## A FMOD file is missing at generation
 
-FMOD Engine and Vercidium Audio are mandatory on `dev`. Download the SDKs directly from their vendors and follow the [required SDKs section](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#required-sdks).
+FMOD Engine is mandatory on `dev`; there's no fallback audio backend. The generation error names the exact missing file.
 
-- `LUX_FMOD_SDK` must point to the package root containing `api/`, with both Core and Studio APIs.
-- `LUX_VA_SDK` must point to the package root containing `3d/`.
-- Supply the package for the target platform; Windows import libraries do not satisfy a Linux build.
+- `LUX_FMOD_SDK` must point to the folder that contains `api/`, with both the Core and Studio APIs.
+- Supply the package for the platform you're building. Windows import libraries don't satisfy a Linux build.
+- Fix the package or the path, then regenerate.
 
-The generation error names the exact absent file. Fix that package or path, then regenerate the solution. These SDKs are not included by a recursive clone and must not be committed or republished with documentation.
+## Asterwave is missing or at the wrong revision
+
+Run `python scripts/FetchAsterwave.py`, or set `LUX_ASTERWAVE_ROOT` to a checkout of the pinned revision. Check it with `python scripts/FetchAsterwave.py --check`, then regenerate.
+
+If the fetch fails with an authentication or "repository not found" error, your Git credentials can't read the private `starbounded-dev/asterwave` repository. There's no public substitute today; see the note in [Getting started](getting-started.md). Neither FMOD nor Asterwave comes with a recursive clone, and neither should be committed to your own repository.
+
+## The editor starts but shows no banks or events
+
+Open **Project Settings → Audio**. The `.fspro` path is relative to `Assets/`, and **Bank Output is a folder** (`Build/Desktop`), not a `.bank` file.
 
 ## .NET host is missing, or `NETSDK1004` appears
 
-Install **.NET SDK 9**. The published scripting host expects major version 9; a different major version alone does not satisfy it.
+If the editor stops at startup with a `hostfxr` or "runtime not found" error, you have .NET 10 (or 8) instead of 9. Coral, the scripting host, hard-codes major version 9, and having a newer one installed doesn't help. Install **.NET SDK 9** next to it. On Linux, distro `dotnet-sdk` metapackages now install 10, so ask for `dotnet-sdk-9.0` by name.
 
 ```powershell
 dotnet --list-sdks
@@ -99,11 +107,23 @@ For a manual Windows launch, use the repository's `Editor/` directory as the wor
 
 On Linux, use `./scripts/Linux-Run.sh release`. It prepares the Vulkan and library environment and checks the build. An executable launched directly from `bin/` can miss that environment.
 
-## Linux reports missing GTK or incompatible glibc
+## Linux reports missing GTK
 
-`gtk+-3.0` development files are required by the file-dialog library. Follow the [distribution-specific dependency list](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#building-on-linux).
+The file-dialog library (NFD-Extended) needs the `gtk+-3.0` development files. Install them from the [package list for your distribution](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#building-on-linux).
 
-The supplied Vercidium Audio 1.9 Linux binary requires **glibc 2.43**, according to the engine's build documentation. Ubuntu 24.04's older glibc cannot satisfy it. Use a compatible environment rather than replacing system glibc manually.
+Older guides mentioned a glibc 2.43 requirement. That came from the prebuilt Vercidium Audio binary, which is gone: Asterwave now builds from source with your own toolchain. Ubuntu 26.04 is what CI uses; older distributions haven't been checked.
+
+## `llvm-ar: not found` in a `dist` build
+
+Ubuntu ships `llvm-ar` with a version suffix, and Premake calls the plain name. Link it once:
+
+```bash
+sudo ln -sf "$(ls -1 /usr/bin/llvm-ar-* | sort -V | tail -1)" /usr/bin/llvm-ar
+```
+
+## "Script project file not found" in the editor
+
+The sample project's `.csproj` is generated, not committed. Run `Editor/LuxSampleProject/Assets/Scripts/Linux-GenProjects.sh` on Linux, or rerun `Linux-Build.sh`. On Windows, rerun `Setup.bat` or `Win-GenProjects.bat --last`.
 
 ## Reporting an issue
 

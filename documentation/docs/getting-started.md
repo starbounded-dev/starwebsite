@@ -1,25 +1,29 @@
 # Getting started
 
-Build LuxEngine from the public **`dev` branch**, which contains the current editor shown on the website. The repository's default `master` branch still contains the older StarEngine / StarEditor project. Its names, dependencies, and setup scripts differ.
+Build LuxEngine from the public **`dev` branch**, which has the current editor shown on the website. The repository's default `master` branch still holds the older StarEngine / StarEditor project, with different names, dependencies and scripts.
 
-These instructions follow [`dev` at commit `76062c9c`](https://github.com/starbounded-dev/LuxEngine/tree/76062c9c2089d82f9a21bba2e86ec282ecf4fa00). Check the [branch README](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md) when updating your checkout. There is no prebuilt editor download provided by this documentation site.
+These instructions follow [`dev`](https://github.com/starbounded-dev/LuxEngine/tree/dev) and its [README](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md) as of November 2026. There's no packaged editor download yet; you build it yourself.
+
+!!! warning "Building needs access to a private repository"
+    Since October 2026 the acoustics library, Asterwave, compiles from source that lives in the private `starbounded-dev/asterwave` repository. FMOD and Asterwave are hard requirements with no fallback, so without read access to that repository the build stops at project generation. If you want to build LuxEngine and don't have access, open an issue and say so.
 
 ## Prerequisites
 
 For Windows, install:
 
-- **Git and Git LFS**, for source code, submodules, and large assets.
-- **Visual Studio 2022** with Desktop development with C++ and a Windows SDK. The setup menu also supports Visual Studio 2026.
-- **Python 3.9 or newer**, including pip, with `python` available in your terminal. Setup installs its Python helper packages.
-- **.NET SDK 9**, specifically, for `ScriptCore` and Coral's managed scripting host.
-- **Vulkan SDK 1.4.x**, including shader debug libraries if you plan to build Debug. The Windows setup currently offers **1.4.341.1** if the check fails; Linux's script downloads **1.4.335.0** by default.
-- **FMOD Engine SDK 2.03.x** with both Core and Studio APIs, and **Vercidium Audio SDK 1.9.x**. Both are required by project generation.
+- **Git and Git LFS**, for the source, submodules and large assets.
+- **Visual Studio 2022** with Desktop development with C++ and a Windows SDK. CI builds with 2022; **Visual Studio 2026** also works with the v145 toolset.
+- **Python 3.9 or newer** on `PATH`. The setup scripts install their own pip packages.
+- **.NET SDK 9**, exactly. Coral, the scripting host, looks for major version 9, and `ScriptCore` targets `net9.0`. .NET 8 or 10 won't do.
+- **Vulkan SDK 1.4.335.0**, the pinned version, with the shader debug libraries if you plan to build Debug. Windows setup offers the installer if it's missing. At runtime the engine only needs a Vulkan 1.2 capable driver.
+- **FMOD Engine 2.03.x** with the Core and Studio APIs, from [fmod.com](https://www.fmod.com/download). It's proprietary, so it isn't in the repository. The **FMOD Studio** authoring tool from the same 2.03 family is worth installing too: it edits and builds banks, and its command-line tool `fmodstudiocl` lets the editor rebuild banks when you press Play.
+- **Read access to `starbounded-dev/asterwave`**. See the warning above.
 
-Get the audio SDKs from [FMOD](https://www.fmod.com/download) and [Vercidium](https://vercidium.com/docs). They are proprietary packages supplied under their vendors' terms, and are not included in the public repository. The [engine README](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#required-sdks) describes the expected versions and layouts. FMOD Studio's authoring application is useful for editing and building audio banks.
+FMOD and Asterwave end up inside every game you export. LuxEngine's Apache-2.0 licence covers LuxEngine's own source only. FMOD keeps its [own licence](https://www.fmod.com/licensing), and Asterwave keeps the licence and provenance records of Vercidium Audio, which it was translated from. Read those files in the Asterwave checkout and the engine's [NOTICE](https://github.com/starbounded-dev/LuxEngine/blob/dev/NOTICE) before you ship a game.
 
-## 1. Clone the current source
+## 1. Clone the source
 
-Run these commands in PowerShell:
+In PowerShell:
 
 ```powershell
 git lfs install
@@ -28,29 +32,30 @@ cd LuxEngine
 git lfs pull
 ```
 
-If you previously cloned without submodules, run this from the repository root:
+If you cloned without submodules, run this from the repository root:
 
 ```powershell
 git submodule update --init --recursive
 ```
 
-## 2. Supply the audio SDKs
+## 2. Supply FMOD and Asterwave
 
-Extract the packages into the engine's expected drop points:
-
-```text
-Core/vendor/FMOD/<package-name>/api/
-Core/vendor/VA_RAY/3d/
-```
-
-Alternatively, point setup at the packages you already installed. In the same PowerShell terminal you will use for generation:
+Fetch Asterwave with Git credentials that can read its repository. The script checks out the exact revision named in `scripts/dependencies/Asterwave.json` into `Core/vendor/Asterwave/`:
 
 ```powershell
-$env:LUX_FMOD_SDK = 'C:\SDKs\FMOD Studio API Windows'
-$env:LUX_VA_SDK = 'C:\SDKs\VA_RAY'
+python scripts/FetchAsterwave.py
+python scripts/FetchAsterwave.py --check   # validate an existing checkout, no fetch
 ```
 
-Use your actual paths. `LUX_FMOD_SDK` must contain `api/`; `LUX_VA_SDK` must contain `3d/`. Premake checks headers, import libraries, and runtime libraries, and reports the exact missing file if a package is incomplete. Never commit SDK packages to your repository.
+Extract FMOD into any subfolder of `Core/vendor/FMOD/`, for example `Core/vendor/FMOD/fmodstudioapi20314win/`. Or point setup at folders you already have, in the terminal you'll generate from:
+
+```powershell
+$env:LUX_FMOD_SDK = 'C:\SDKs\FMOD Studio API Windows'   # the folder that contains api/
+$env:LUX_ASTERWAVE_ROOT = 'C:\Source\Asterwave'          # must be the pinned revision
+$env:LUX_FMOD_STUDIO_CL = 'C:\Program Files\FMOD SoundSystem\FMOD Studio 2.03.14\fmodstudiocl.exe'   # optional
+```
+
+Premake checks the FMOD headers and libraries and the Asterwave revision when it generates the solution. It doesn't download anything at that point, and a missing or mismatched file stops generation with that file's name. Asterwave links statically, so there's no extra DLL to install. Never commit the FMOD package or the Asterwave checkout to your own repository.
 
 ## 3. Generate the solution
 
@@ -60,55 +65,93 @@ From the repository root:
 .\scripts\Setup.bat
 ```
 
-Select optional features and your Visual Studio version in the setup menus. Setup checks Vulkan, pulls Git LFS assets and submodules, sets `LUX_DIR`, and generates the engine and sample script projects. Your selections are saved in `scripts/.luxsetup.json`.
+Pick optional features and your Visual Studio version in the menus. Setup sets `LUX_DIR`, checks the Vulkan SDK, pulls submodules and Git LFS assets, warns about missing SDKs, and generates the engine and sample script projects. It saves your choices in `scripts/.luxsetup.json`.
 
-If the Vulkan installer opens, finish it, open a new terminal to pick up `VULKAN_SDK`, and run setup again. Project generation is already part of setup; a separate generator run is useful later when source files change.
+If the Vulkan installer opens, finish it, open a new terminal so `VULKAN_SDK` is picked up, and run setup again.
 
 ## 4. Build and launch
 
-1. Open **`Lux.sln`** for Visual Studio 2022, or **`Lux.slnx`** for Visual Studio 2026.
-2. Start with the **Release** configuration. The solution uses **Mixed Platforms** to combine native x64 projects with managed projects.
-3. Set **`Editor`** as the startup project. The generated workspace initially selects `Core`, which is a library.
-4. Build the solution, then run the editor from Visual Studio.
+1. Open **`Lux.sln`** in Visual Studio 2022, or **`Lux.slnx`** in 2026.
+2. Start with **Release**. The solution uses the **Mixed Platforms** platform to combine native x64 projects with the managed C# ones.
+3. Set **`Editor`** as the startup project. The generated solution starts with `Core` selected, and `Core` is a library.
+4. Build, then run.
 
-From a Visual Studio Developer terminal, the VS2022 solution can also be built with:
+From a Visual Studio Developer terminal you can build the 2022 solution directly:
 
 ```powershell
 MSBuild Lux.sln /restore /m /p:Configuration=Release /p:Platform="Mixed Platforms"
 ```
 
-`/restore` is required for the managed projects. The editor executable is produced at `bin/Release-windows-x86_64/Editor/Editor.exe`. For a manual launch, use `Editor/` as the working directory so resource paths resolve. The bundled sample project is `Editor/LuxSampleProject/LuxSample.luxproj`.
+`/restore` is required: `ScriptCore` and `Coral.Managed` are SDK-style C# projects and fail with `NETSDK1004` without a NuGet restore. The editor lands at `bin/Release-windows-x86_64/Editor/Editor.exe`. To launch it by hand, run it from `Editor/` so resource paths resolve. The build copies `fmod.dll` and `fmodstudio.dll` next to it.
 
-These instructions are checked against the published source definitions. This documentation setup does not run a full native engine build on your machine; see [Troubleshooting](troubleshooting.md) for failed prerequisite checks and common build errors.
+On first launch the editor opens the sample project at `Editor/LuxSampleProject/LuxSample.luxproj`.
 
 ## Linux
 
-The public `dev` tree also contains a Linux build path. Install the [distribution-specific dependencies](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#building-on-linux), including .NET 9, Clang, GNU make, GTK3, X11/Wayland development libraries, and the two audio SDKs. For the supplied Vercidium Audio 1.9 Linux binary, the engine's build documentation specifies **glibc 2.43**, using Ubuntu 26.04 for CI; an older distribution may not link it.
+Linux x64 is a supported target. CI builds it on Ubuntu 26.04, and it's developed day to day on Arch. Install the [packages for your distribution](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#building-on-linux): Clang, GNU make, pkg-config, the .NET 9 SDK, GTK3 for file dialogs, X11 and Wayland development files, and libdw and libunwind for crash backtraces.
 
-Then run from the repository root:
+Distro `dotnet-sdk` metapackages now install .NET 10, which won't work, so ask for `dotnet-sdk-9.0` by name. openSUSE doesn't package .NET 9 at all; use Microsoft's `dotnet-install` script there.
+
+Fetch Asterwave and supply FMOD as in step 2 (`LUX_FMOD_SDK` and `LUX_ASTERWAVE_ROOT` work the same way), then run from the repository root:
 
 ```bash
 ./scripts/Linux-Build.sh release
 ./scripts/Linux-Run.sh release
 ```
 
-The build script downloads a pinned Premake binary and the Linux Vulkan SDK when they are absent, generates makefiles, and builds. The run script also checks the build and prepares the library paths. Prefer it to launching the executable directly from `bin/`.
+`Linux-Build.sh` is safe to re-run; each step checks before it acts. In order, it:
+
+1. checks for `dotnet`, `make`, `clang`, `pkg-config`, `curl`, `tar` and GTK3, and names whichever is missing;
+2. updates submodules;
+3. downloads Vulkan SDK 1.4.335.0 into `Core/vendor/VulkanSDK/`, unless `VULKAN_SDK` is set;
+4. downloads a checksum-verified premake5 5.0.0-beta4;
+5. generates the C# projects and builds `Coral.Managed` and `ScriptCore` with `dotnet`;
+6. generates makefiles with `premake5 gmake2 --cc=clang` and builds `Core`, `Editor` and `Lux-Runtime`;
+7. builds the sample project's script assembly.
+
+Handy variables: `BUILD_CONFIG` skips the prompt, `JOBS` sets make's parallelism, `LUX_PREMAKE_OPTIONS` passes flags like `--no-tracy`, and `VULKAN_SDK` uses a system SDK.
+
+Launch through `Linux-Run.sh`. It sets `VULKAN_SDK`, `VK_LAYER_PATH` and `LD_LIBRARY_PATH` and starts in `Editor/`; the binary in `bin/` can't find its libraries on its own. X11 and Wayland both work. `Linux-RunRuntime.sh` starts the standalone player, and `Linux-RenderDoc.sh` starts the editor inside RenderDoc.
+
+For a `dist` build on Debian or Ubuntu, link the version-suffixed `llvm-ar` to the plain name, because Premake calls `llvm-ar`:
+
+```bash
+sudo ln -sf "$(ls -1 /usr/bin/llvm-ar-* | sort -V | tail -1)" /usr/bin/llvm-ar
+```
+
+## Build configurations
+
+| Configuration | Optimisation | Symbols | What it's for |
+| --- | --- | --- | --- |
+| `debug` | off | on | Assertions, Jolt floating-point exceptions and Vulkan validation layers. |
+| `debug-as` | off | on | AddressSanitizer, on Windows. On Linux it's a plain debug build. |
+| `release` | on | default | Day-to-day work. Built for AVX2 with BMI, POPCNT, LZCNT and F16C. |
+| `dist` | full | off | Shipping builds: link-time optimisation, no Tracy, no Aftermath. |
+
+Binaries land in `bin/<Config>-<os>-x86_64/<Project>/`.
+
+Premake options, which `Setup.bat` offers as checkboxes and Linux takes through `LUX_PREMAKE_OPTIONS`:
+
+| Flag | Effect |
+| --- | --- |
+| `--no-tracy` | Leaves out Tracy instrumentation, so builds are smaller and link faster. Pass it on every generation, or you'll get undefined references. |
+| `--no-aftermath` | Leaves out the Nvidia Aftermath GPU crash tracker. |
+| `--discord` | Turns on the Discord Social SDK integration. Needs `Core/vendor/discord_social_sdk/`. |
 
 ## Regenerate after source changes
 
-Premake does not regenerate project files during an ordinary rebuild. After adding, removing, or renaming sources, or changing a Premake definition, run:
+Premake doesn't regenerate project files during a normal rebuild. After you add, remove or rename source files, or change a Premake script, run:
 
 ```powershell
 .\scripts\Win-GenProjects.bat --last
 ```
 
-This reuses the saved Windows configuration without the setup menus. Reload the solution in Visual Studio and rebuild. On Linux, rerun `Linux-Build.sh` with the same configuration and feature options.
+`--last` reuses the saved configuration without the menus. Reload the solution and rebuild. On Linux, rerun `Linux-Build.sh` with the same options.
 
 ## Source references
 
 - [Development README](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md)
 - [Windows setup](https://github.com/starbounded-dev/LuxEngine/blob/dev/scripts/Setup.py)
-- [Windows generator options](https://github.com/starbounded-dev/LuxEngine/blob/dev/scripts/BuildOptions.py)
-- [Windows Vulkan checks](https://github.com/starbounded-dev/LuxEngine/blob/dev/scripts/Vulkan.py)
+- [Asterwave pin](https://github.com/starbounded-dev/LuxEngine/blob/dev/scripts/dependencies/Asterwave.json)
 - [Linux build script](https://github.com/starbounded-dev/LuxEngine/blob/dev/scripts/Linux-Build.sh)
 - [SDK discovery and validation](https://github.com/starbounded-dev/LuxEngine/blob/dev/Dependencies.lua)

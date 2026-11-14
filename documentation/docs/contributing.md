@@ -21,6 +21,12 @@ For a rendering issue, add the scene name, viewport resolution, camera view, and
 
 Check logs and attachments for personal paths, credentials, and unrelated private information before sharing them.
 
+## Find something to work on
+
+Every planned item for 2027.1 is an issue on the [project board](https://github.com/orgs/starbounded-dev/projects/3), labelled with its catalog ID (M2, R9, SC5 and so on), a priority and a size. P0 items are needed for the release; P1 items are wanted. The [roadmap](roadmap.md) explains how the board is organised. S and M items are the easiest place to start. Each issue says where the code stands today and what "done" means.
+
+Bugs get their own issue with the `bug` label, saying what happens, how to reproduce it, and what should happen instead.
+
 ## Propose a code change
 
 For a larger change, open an issue to explain the problem and proposed approach before spending a lot of time on it. Keep a pull request focused on one change where possible.
