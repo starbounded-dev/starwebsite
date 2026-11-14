@@ -15,7 +15,16 @@ Before editing code for a new feature:
 2. If the working tree has uncommitted changes that belong to something else, stop and ask what to do with them. Don't carry them onto the feature branch silently.
 3. Create the branch from the parent: `git switch -c feature/<short-kebab-slug>`.
 4. Do the work and commit on that branch.
-5. When it's done, offer to merge it back into the parent or open a PR against the parent (not `master`, unless the parent is `master`). Pushing, merging and opening PRs still need the owner's go-ahead.
+5. When it's done, offer to open a PR against the parent (not `master`, unless the parent is `master`). Pushing, merging and opening PRs still need the owner's go-ahead.
+
+### Merging needs a PR with green checks (starwebsite)
+
+`dev` and `master` are protected: nobody can push to them directly, admins included. Every change lands through a pull request, and it can only merge when these checks pass:
+
+- **CI / Lint, typecheck and tests** and **CI / Docs and production build** (`.github/workflows/ci.yml`)
+- **PR checklist / Required checklist complete** (`.github/workflows/pr-checklist.yml`): every box under `## Required` in the PR description must be ticked. The description starts from `.github/pull_request_template.md`.
+
+So the flow is: feature branch → PR into `dev` → checks green and checklist ticked → merge. A release is a PR from `dev` into `master`, with the same checks; merging it deploys starbounded.com through Vercel. Tick a box only after doing what it says. If an item doesn't apply, tick it and write why on the same line.
 
 A fix to work already on the current branch, or a small tweak the owner asked for on that branch, is not a new feature. Stay on the branch for those.
 

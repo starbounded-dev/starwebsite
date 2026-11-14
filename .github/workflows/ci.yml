@@ -1,0 +1,58 @@
+name: CI
+
+# Required to pass before anything merges into dev or master (branch
+# protection names these jobs). Mirrors what Vercel runs, so a green CI means
+# the deploy will build.
+
+on:
+  pull_request:
+    branches: [dev, master]
+  push:
+    branches: [dev, master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, typecheck and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
+
+  build:
+    name: Docs and production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: documentation/requirements.txt
+      - name: Install the docs toolchain
+        run: |
+          python -m venv .venv-docs
+          .venv-docs/bin/python -m pip install -r documentation/requirements.txt
+      - run: npm ci
+      # `npm run build` runs the strict MkDocs build first (prebuild), so a
+      # broken docs link or anchor fails here too.
+      - run: npm run build
