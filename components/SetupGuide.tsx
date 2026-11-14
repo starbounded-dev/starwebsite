@@ -16,24 +16,23 @@ const steps = [
     id: "clone",
     title: "Clone the source",
     description:
-      "Clone the current dev branch, then change into the LuxEngine folder.",
+      "Clone the dev branch with its submodules. Install the Vulkan SDK, the .NET 9 SDK and the FMOD Engine 2.03 first; the setup guide links each one.",
     command:
       "git clone --branch dev --recursive https://github.com/starbounded-dev/LuxEngine.git",
   },
   {
-    id: "setup",
-    title: "Set up dependencies",
+    id: "asterwave",
+    title: "Fetch Asterwave",
     description:
-      "From the LuxEngine folder, check prerequisites and generate the solution. The docs cover the required SDKs.",
-    command: ".\\scripts\\Setup.bat",
+      "From the LuxEngine folder, fetch the acoustics library at the exact revision pinned in scripts/dependencies/Asterwave.json. This needs read access to the private Asterwave repository.",
+    command: "python scripts/FetchAsterwave.py",
   },
   {
-    id: "build",
-    title: "Build the editor",
+    id: "setup",
+    title: "Generate and build",
     description:
-      "In a Visual Studio Developer terminal, build Release, then set Editor as the startup project in Lux.sln.",
-    command:
-      'MSBuild Lux.sln /restore /m /p:Configuration=Release /p:Platform="Mixed Platforms"',
+      "Setup.bat checks the Vulkan SDK, pulls submodules and Git LFS assets, and writes Lux.sln. Open it in Visual Studio 2022 (or Lux.slnx in 2026), set Editor as the startup project, and build.",
+    command: ".\\scripts\\Setup.bat",
   },
 ] as const;
 
