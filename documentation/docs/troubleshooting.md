@@ -1,6 +1,6 @@
 # Troubleshooting
 
-These notes target the public **`dev` branch**, matching the [getting started guide](getting-started.md). Check your branch first: `master` contains the older StarEngine / StarEditor project and uses a different setup.
+These notes match the [getting started guide](getting-started.md), which follows the newest work on `feature/lucky-merge` (on its way into `dev`). Check your branch first: `master` contains the older StarEngine / StarEditor project and uses a different setup.
 
 ## There is no `Lux.sln` or `Editor` project
 
@@ -11,7 +11,7 @@ git branch --show-current
 git rev-parse --short HEAD
 ```
 
-The newer public `dev` branch generates `Lux.sln` for VS2022 or `Lux.slnx` for VS2026. Its startup application is `Editor`. If you see `StarEngine.sln` and `StarEditor`, you have the older tree. Use a separate `dev` checkout if you want to keep that existing work.
+Current LuxEngine generates `Lux.sln` for VS2022 or `Lux.slnx` for VS2026. Its startup application is `Editor`. If you see `StarEngine.sln` and `StarEditor`, you have the older tree. Use a separate `dev` checkout if you want to keep that existing work.
 
 If no solution was generated, correct setup's first reported error and rerun `.\scripts\Setup.bat` from the repository root.
 
@@ -28,7 +28,7 @@ Setup uses that same interpreter to install its helper packages. If Windows open
 
 ## Vulkan SDK is missing or rejected
 
-The Windows `dev` script checks that `VULKAN_SDK` points to a **1.4.x** installation and currently offers the **1.4.341.1** installer. Its Linux counterpart downloads **1.4.335.0** by default. Use the check from the script in your checkout when versions change.
+The README pins **Vulkan SDK 1.4.335.0**. The Windows setup script checks that `VULKAN_SDK` points to a 1.4 installation and offers the installer if it doesn't; the Linux script downloads 1.4.335.0 into `Core/vendor/VulkanSDK/`. If the versions in your checkout differ, the scripts there are the authority.
 
 After installing the SDK, open a new terminal and inspect:
 
@@ -42,19 +42,21 @@ It should be the actual SDK directory. Rerun setup after installation finishes. 
 
 The Windows script checks for `Lib\shaderc_sharedd.lib` under `VULKAN_SDK`. Install the matching SDK's shader debug libraries to build Debug. Start with **Release** while resolving a Debug-only library issue.
 
-## `Required audio SDK file missing`
+## An Audio Source is silent and logs "has an FMOD event but no Sound"
 
-FMOD Engine and Vercidium Audio are mandatory on `dev`. Download the SDKs directly from their vendors and follow the [required SDKs section](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#required-sdks).
+The scene was made when LuxEngine used FMOD. FMOD references never play now. Assign a Sound to the source; the inspector still shows the old event so you know what it was. To clear every old reference at once, use **Project Settings → Audio → Legacy FMOD Data**; see [Audio](audio.md#projects-made-with-fmod).
 
-- `LUX_FMOD_SDK` must point to the package root containing `api/`, with both Core and Studio APIs.
-- `LUX_VA_SDK` must point to the package root containing `3d/`.
-- Supply the package for the target platform; Windows import libraries do not satisfy a Linux build.
+## A Sound plays late or stalls a frame
 
-The generation error names the exact absent file. Fix that package or path, then regenerate the solution. These SDKs are not included by a recursive clone and must not be committed or republished with documentation.
+The Sound isn't in a loaded Sound Bank, so it loads the first time it plays. Add it to a bank and list that bank under **Scene Sound Banks** in the Audio Mixer. Debug builds warn about this once, and the Audio Debugger's validation lists Sounds in no bank.
+
+## The build asks for FMOD or Asterwave
+
+You're on a branch from before the built-in audio engine, such as `dev` before pull request 36 merges. Clone or switch to `feature/lucky-merge`, which needs neither; see [Getting started](getting-started.md).
 
 ## .NET host is missing, or `NETSDK1004` appears
 
-Install **.NET SDK 9**. The published scripting host expects major version 9; a different major version alone does not satisfy it.
+If the editor stops at startup with a `hostfxr` or "runtime not found" error, you have an older .NET (8 or 9) instead of 10. Install the **.NET 10 SDK**. On Linux the package is `dotnet-sdk` on Arch and `dotnet-sdk-10.0` on Debian, Ubuntu and Fedora.
 
 ```powershell
 dotnet --list-sdks
@@ -99,11 +101,23 @@ For a manual Windows launch, use the repository's `Editor/` directory as the wor
 
 On Linux, use `./scripts/Linux-Run.sh release`. It prepares the Vulkan and library environment and checks the build. An executable launched directly from `bin/` can miss that environment.
 
-## Linux reports missing GTK or incompatible glibc
+## Linux reports missing GTK
 
-`gtk+-3.0` development files are required by the file-dialog library. Follow the [distribution-specific dependency list](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#building-on-linux).
+The file-dialog library (NFD-Extended) needs the `gtk+-3.0` development files. Install them from the [package list for your distribution](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#building-on-linux).
 
-The supplied Vercidium Audio 1.9 Linux binary requires **glibc 2.43**, according to the engine's build documentation. Ubuntu 24.04's older glibc cannot satisfy it. Use a compatible environment rather than replacing system glibc manually.
+Older guides mentioned a glibc 2.43 requirement. That came from a prebuilt audio library the engine no longer uses; audio is now compiled from source with your own toolchain. Ubuntu 26.04 is what CI uses; older distributions haven't been checked.
+
+## `llvm-ar: not found` in a `dist` build
+
+Ubuntu ships `llvm-ar` with a version suffix, and Premake calls the plain name. Link it once:
+
+```bash
+sudo ln -sf "$(ls -1 /usr/bin/llvm-ar-* | sort -V | tail -1)" /usr/bin/llvm-ar
+```
+
+## "Script project file not found" in the editor
+
+The sample project's `.csproj` is generated, not committed. Run `Editor/LuxSampleProject/Assets/Scripts/Linux-GenProjects.sh` on Linux, or rerun `Linux-Build.sh`. On Windows, rerun `Setup.bat` or `Win-GenProjects.bat --last`.
 
 ## Reporting an issue
 

@@ -1,5 +1,5 @@
 site_name: LuxEngine Docs
-site_description: Build LuxEngine from source, find your way around the editor, and contribute to the engine.
+site_description: Build LuxEngine from source, learn the editor, renderer, audio, C# scripting, physics and export, and follow the 2027.1 roadmap.
 site_url: https://www.starbounded.com/docs/
 repo_url: https://github.com/starbounded-dev/LuxEngine/tree/dev
 repo_name: LuxEngine / dev
@@ -42,12 +42,19 @@ theme:
 nav:
   - Welcome: index.md
   - Start here:
-      - Build from source: getting-started.md
+      - Getting started: getting-started.md
       - Troubleshooting: troubleshooting.md
   - Using LuxEngine:
-      - Find your way around: editor.md
-      - Rendering & materials: rendering.md
-  - Contributing: contributing.md
+      - The editor: editor.md
+      - Rendering and materials: rendering.md
+      - Audio: audio.md
+      - Scripting in C#: scripting.md
+      - Scenes, prefabs and physics: scenes-and-physics.md
+      - Assets and export: assets-and-export.md
+      - Profiling and debugging: profiling.md
+  - The project:
+      - Roadmap to 2027.1: roadmap.md
+      - Contributing: contributing.md
   - Starbounded ↗: https://www.starbounded.com/
 
 plugins:
