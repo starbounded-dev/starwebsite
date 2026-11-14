@@ -1,18 +1,28 @@
 import { Arrow } from "./Icons";
+import { RoadmapBoard } from "./RoadmapBoard";
 import {
+  COLLAPSED_PER_COLUMN,
   board,
   columns,
   cuts,
   formatDate,
+  subIssuesOf,
+  type BoardStatus,
   type RoadmapCard,
 } from "@/lib/roadmap";
 
 // The LuxEngine project board, rendered from the snapshot in lib/roadmap.json.
 // Work moves left to right as it lands, the same way it does on the board.
+// Collapsed, each column shows COLLAPSED_PER_COLUMN cards; expanded, the board
+// shows every item and each must-have's sub-issues.
 
 type ColumnState = "planned" | "next" | "active" | "done";
 
-const SHIPPED_SHOWN = 6;
+const stateOf: Record<BoardStatus, ColumnState> = {
+  Todo: "next",
+  "In Progress": "active",
+  Done: "done",
+};
 
 function StateIcon({ state }: { state: ColumnState }) {
   if (state === "done") {
@@ -61,44 +71,81 @@ function Progress({ total, done }: { total: number; done: number }) {
   );
 }
 
-function Card({ card, state }: { card: RoadmapCard; state: ColumnState }) {
-  const body = (
-    <>
-      <StateIcon state={state} />
-      <div>
-        <p className="board-card-title">{card.title}</p>
-        {card.detail ? <p className="board-card-detail">{card.detail}</p> : null}
-        {card.progress ? <Progress {...card.progress} /> : null}
-        <ul className="board-labels" role="list" aria-label="Details">
-          {card.tag ? <li className="tag">{card.tag}</li> : null}
-          {card.size ? <li>Size {card.size}</li> : null}
-          {card.date ? <li>{formatDate(card.date)}</li> : null}
-        </ul>
-      </div>
-    </>
-  );
+/** A must-have's sub-issues, shown only on the expanded board. */
+function SubIssues({ cards }: { cards: RoadmapCard[] }) {
+  if (cards.length === 0) return null;
   return (
-    <li>
-      {card.url ? (
-        <a href={card.url} className="board-card">
-          {body}
-        </a>
-      ) : (
-        <div className="board-card">{body}</div>
-      )}
+    <ul className="board-subissues" role="list" aria-label="Sub-issues" data-extra>
+      {cards.map((card) => (
+        <li key={card.key} data-status={stateOf[card.status]}>
+          <StateIcon state={stateOf[card.status]} />
+          <a href={card.url ?? board.url}>
+            <span className="board-row-tag">{card.tag}</span> {card.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Card({
+  card,
+  state,
+  extra,
+}: {
+  card: RoadmapCard;
+  state: ColumnState;
+  extra: boolean;
+}) {
+  const subs = card.progress ? subIssuesOf(card.number) : [];
+  return (
+    <li data-extra={extra || undefined}>
+      <div className="board-card">
+        <StateIcon state={state} />
+        <div>
+          <p className="board-card-title">
+            {card.url ? (
+              <a href={card.url} className="board-card-link">
+                {card.title}
+              </a>
+            ) : (
+              card.title
+            )}
+          </p>
+          {card.detail ? (
+            <p className="board-card-detail">{card.detail}</p>
+          ) : null}
+          {card.progress ? <Progress {...card.progress} /> : null}
+          <ul className="board-labels" role="list" aria-label="Details">
+            {card.tag ? <li className="tag">{card.tag}</li> : null}
+            {card.size ? <li>Size {card.size}</li> : null}
+            {card.date ? <li>{formatDate(card.date)}</li> : null}
+          </ul>
+          <SubIssues cards={subs} />
+        </div>
+      </div>
     </li>
   );
 }
 
-function CompactRow({ card }: { card: RoadmapCard }) {
+function CompactRow({ card, extra }: { card: RoadmapCard; extra: boolean }) {
   return (
-    <li>
+    <li data-extra={extra || undefined}>
       <a href={card.url ?? board.url} className="board-row">
         <StateIcon state="planned" />
         <span className="board-row-tag">{card.tag}</span>
         <span>{card.title}</span>
       </a>
     </li>
+  );
+}
+
+function MoreHint({ hidden }: { hidden: number }) {
+  if (hidden <= 0) return null;
+  return (
+    <p className="board-more-hint" aria-hidden="true">
+      +{hidden} more
+    </p>
   );
 }
 
@@ -110,19 +157,9 @@ type ColumnProps = {
   text: string;
   count: number;
   children: React.ReactNode;
-  footer?: React.ReactNode;
 };
 
-function Column({
-  id,
-  name,
-  state,
-  theme,
-  text,
-  count,
-  children,
-  footer,
-}: ColumnProps) {
+function Column({ id, name, state, theme, text, count, children }: ColumnProps) {
   const headingId = `board-${id}`;
   return (
     <section
@@ -144,23 +181,34 @@ function Column({
       </header>
       <div className="board-column-body">
         {children}
-        {footer}
+        <MoreHint hidden={count - COLLAPSED_PER_COLUMN} />
       </div>
     </section>
   );
 }
 
+const isExtra = (index: number) => index >= COLLAPSED_PER_COLUMN;
+
 export function Roadmap() {
-  const shipped = columns.shipped.slice(0, SHIPPED_SHOWN);
-  const moreShipped = columns.shipped.length - shipped.length;
+  const lists = [
+    columns.wanted,
+    columns.mustTodo,
+    columns.inProgress,
+    columns.shipped,
+  ];
+  const subCount = [...columns.mustTodo, ...columns.inProgress].reduce(
+    (sum, card) => sum + (card.progress ? subIssuesOf(card.number).length : 0),
+    0,
+  );
+  const total = lists.reduce((sum, list) => sum + list.length, 0) + subCount;
+  const shown = lists.reduce(
+    (sum, list) => sum + Math.min(list.length, COLLAPSED_PER_COLUMN),
+    0,
+  );
+
   return (
     <>
-      <div
-        className="board"
-        role="region"
-        aria-label="LuxEngine project board"
-        tabIndex={0}
-      >
+      <RoadmapBoard total={total} shown={shown}>
         <Column
           id="wanted"
           name="Wanted"
@@ -170,8 +218,8 @@ export function Roadmap() {
           count={columns.wanted.length}
         >
           <ul className="board-rows" role="list">
-            {columns.wanted.map((card) => (
-              <CompactRow key={card.key} card={card} />
+            {columns.wanted.map((card, index) => (
+              <CompactRow key={card.key} card={card} extra={isExtra(index)} />
             ))}
           </ul>
         </Column>
@@ -181,12 +229,17 @@ export function Roadmap() {
           name="Must-haves"
           state="next"
           theme="Not started yet"
-          text="2027.1 does not ship without these. Each one is split into sub-issues on GitHub."
+          text="2027.1 does not ship without these. Expand the board to see each one's sub-issues."
           count={columns.mustTodo.length}
         >
           <ul className="board-cards" role="list">
-            {columns.mustTodo.map((card) => (
-              <Card key={card.key} card={card} state="next" />
+            {columns.mustTodo.map((card, index) => (
+              <Card
+                key={card.key}
+                card={card}
+                state="next"
+                extra={isExtra(index)}
+              />
             ))}
           </ul>
         </Column>
@@ -200,8 +253,13 @@ export function Roadmap() {
           count={columns.inProgress.length}
         >
           <ul className="board-cards" role="list">
-            {columns.inProgress.map((card) => (
-              <Card key={card.key} card={card} state="active" />
+            {columns.inProgress.map((card, index) => (
+              <Card
+                key={card.key}
+                card={card}
+                state="active"
+                extra={isExtra(index)}
+              />
             ))}
           </ul>
         </Column>
@@ -213,21 +271,19 @@ export function Roadmap() {
           theme="Merged, newest first"
           text="Pull requests and finished items from the board."
           count={columns.shipped.length}
-          footer={
-            moreShipped > 0 ? (
-              <a href={board.url} className="board-more">
-                {moreShipped} older items on the board <Arrow diagonal />
-              </a>
-            ) : null
-          }
         >
           <ul className="board-cards" role="list">
-            {shipped.map((card) => (
-              <Card key={card.key} card={card} state="done" />
+            {columns.shipped.map((card, index) => (
+              <Card
+                key={card.key}
+                card={card}
+                state="done"
+                extra={isExtra(index)}
+              />
             ))}
           </ul>
         </Column>
-      </div>
+      </RoadmapBoard>
       {cuts.length > 0 ? (
         <p className="board-cuts">
           Also on the board: {cuts.length} things to remove or hide before
@@ -238,7 +294,8 @@ export function Roadmap() {
               <a href={card.url ?? board.url}>{card.title}</a>
             </span>
           ))}
-          .
+          . <a href={board.url}>Open the full board on GitHub</a>{" "}
+          <Arrow diagonal />
         </p>
       ) : null}
     </>

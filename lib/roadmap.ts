@@ -24,6 +24,8 @@ export type BoardItem = {
 
 export type RoadmapCard = {
   key: string;
+  number: number | null;
+  status: BoardStatus;
   /** Catalog ID such as "M2" or "R9", or "PR 36". */
   tag: string | null;
   title: string;
@@ -76,6 +78,8 @@ function toCard(item: BoardItem): RoadmapCard {
     const { title, detail } = splitTitle(must[2]);
     return {
       key,
+      number: item.number,
+      status: item.status,
       tag: must[1],
       title,
       detail,
@@ -90,11 +94,14 @@ function toCard(item: BoardItem): RoadmapCard {
     const { title, detail } = splitTitle(
       row[2]
         .replace(/`/g, "")
+        .replace(/[✔◐]\s*/g, "")
         .replace(/\s*\((backlog|§)[^)]*\)/g, "")
         .replace(/\s*\((?:[A-Z]+\d+[a-z]?(?:,\s*)?)+\)/g, ""),
     );
     return {
       key,
+      number: item.number,
+      status: item.status,
       tag: row[1],
       title,
       detail,
@@ -106,6 +113,8 @@ function toCard(item: BoardItem): RoadmapCard {
   }
   return {
     key,
+    number: item.number,
+    status: item.status,
     tag: item.kind === "pr" && item.number ? `PR ${item.number}` : null,
     title: clean(item.title),
     detail: null,
@@ -148,6 +157,18 @@ export const columns = {
     .map(toCard)
     .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "")),
 };
+
+/** How many cards each column shows before the board is expanded. */
+export const COLLAPSED_PER_COLUMN = 3;
+
+/** The sub-issues of a must-have, in catalog order, for the expanded board. */
+export function subIssuesOf(parent: number | null): RoadmapCard[] {
+  if (parent === null) return [];
+  return items
+    .filter((i) => i.parent === parent)
+    .map(toCard)
+    .sort((a, b) => (a.number ?? 0) - (b.number ?? 0));
+}
 
 export const cuts = items
   .filter((i) => inRelease(i) && CUT_IDS.has(tagOf(i)))
