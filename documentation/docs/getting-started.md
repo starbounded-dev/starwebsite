@@ -3,7 +3,7 @@
 Build LuxEngine from source. There's no packaged editor download yet. Once the work below reaches the `dev` branch, every push to `dev` will publish a prebuilt pre-release zip for Windows and Linux on the [Releases page](https://github.com/starbounded-dev/LuxEngine/releases).
 
 !!! note "Which branch"
-    These steps describe LuxEngine as of November 2026, from the newest work on [`feature/lucky-merge`](https://github.com/starbounded-dev/LuxEngine/tree/feature/lucky-merge). That branch removes FMOD, replaces the old acoustics library with the engine's own (Soundwave) and moves scripting to .NET 10. It's on its way into `dev` through [pull request 36](https://github.com/starbounded-dev/LuxEngine/pull/36). Until that merges, `dev` still asks for the FMOD SDK and .NET 9, so clone `feature/lucky-merge` if you want to follow this page today.
+    These steps describe the public [`dev` branch](https://github.com/starbounded-dev/LuxEngine/tree/dev) as of November 2026. [Pull request 36](https://github.com/starbounded-dev/LuxEngine/pull/36) brought built-in audio, Soundwave acoustics and .NET 10 to that branch.
 
     The repository's default `master` branch is the older StarEngine project, with different names and scripts.
 
@@ -25,12 +25,12 @@ In PowerShell:
 
 ```powershell
 git lfs install
-git clone --branch feature/lucky-merge --recursive https://github.com/starbounded-dev/LuxEngine.git
+git clone --branch dev --recursive https://github.com/starbounded-dev/LuxEngine.git
 cd LuxEngine
 git lfs pull
 ```
 
-Once pull request 36 has merged, use `--branch dev` instead. If you cloned without submodules, run this from the repository root:
+If you cloned without submodules, run this from the repository root:
 
 ```powershell
 git submodule update --init --recursive
@@ -67,7 +67,7 @@ On first launch the editor opens the sample project, `Editor/LuxSampleProject/Lu
 
 ## Linux
 
-Linux x64 is a supported target. CI builds it on Ubuntu 26.04, and it's developed day to day on Arch. Install the [packages for your distribution](https://github.com/starbounded-dev/LuxEngine/blob/feature/lucky-merge/README.md#building-on-linux): Clang, GNU make, pkg-config, the .NET 10 SDK, GTK3 for file dialogs, X11 and Wayland development files, and libdw and libunwind for crash backtraces.
+Linux x64 is a supported target. CI builds it on Ubuntu 26.04, and it's developed day to day on Arch. Install the [packages for your distribution](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md#building-on-linux): Clang, GNU make, pkg-config, the .NET 10 SDK, GTK3 for file dialogs, X11 and Wayland development files, and libdw and libunwind for crash backtraces.
 
 The .NET package is `dotnet-sdk` on Arch and `dotnet-sdk-10.0` on Debian, Ubuntu and Fedora. If your release doesn't package .NET 10, or you're on openSUSE, use Microsoft's `dotnet-install` script.
 
@@ -133,7 +133,7 @@ The engine's CI is set up to publish a pre-release for every push to `dev`: one 
 
 ## Source references
 
-- [README on feature/lucky-merge](https://github.com/starbounded-dev/LuxEngine/blob/feature/lucky-merge/README.md)
-- [Windows setup](https://github.com/starbounded-dev/LuxEngine/blob/feature/lucky-merge/scripts/Setup.py)
-- [Linux build script](https://github.com/starbounded-dev/LuxEngine/blob/feature/lucky-merge/scripts/Linux-Build.sh)
-- [Dependency definitions](https://github.com/starbounded-dev/LuxEngine/blob/feature/lucky-merge/Dependencies.lua)
+- [README on dev](https://github.com/starbounded-dev/LuxEngine/blob/dev/README.md)
+- [Windows setup](https://github.com/starbounded-dev/LuxEngine/blob/dev/scripts/Setup.py)
+- [Linux build script](https://github.com/starbounded-dev/LuxEngine/blob/dev/scripts/Linux-Build.sh)
+- [Dependency definitions](https://github.com/starbounded-dev/LuxEngine/blob/dev/Dependencies.lua)

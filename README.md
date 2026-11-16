@@ -59,9 +59,11 @@ The [documentation maintainer guide](documentation/README.md) explains the setup
 
 ## Roadmap
 
-The roadmap on `/lux` renders `lib/roadmap.json`, a snapshot of the [LuxEngine project board](https://github.com/orgs/starbounded-dev/projects/3). GitHub only serves Projects through GraphQL, which always needs a token, so the board is saved and committed rather than fetched during the build.
+The roadmap on `/lux` reads the [LuxEngine project board](https://github.com/orgs/starbounded-dev/projects/3) through GitHub GraphQL on the server. It refreshes at most every five minutes. The GraphQL response supplies the issue titles, project statuses and fields, milestone, sub-issue progress, and merged pull requests; no card content needs editing on the website when the board changes.
 
-After moving cards on the board, refresh the snapshot and commit it:
+Set `GITHUB_TOKEN` as a **server-side Secret** in Vercel for Production and Preview. It needs read access to the organization project (`read:project` for a classic token). Never prefix it with `NEXT_PUBLIC_`. If the token is missing, GitHub is down, or the API rejects a page, the site displays the committed `lib/roadmap.json` copy with a visible notice and a link to the live board. A partial response is never shown as a complete board.
+
+Refresh the backup copy occasionally and commit it, especially before a release:
 
 ```bash
 npm run roadmap:sync
