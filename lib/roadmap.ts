@@ -1,10 +1,6 @@
 import snapshot from "./roadmap.json";
 
-/**
- * The /lux roadmap, read from a snapshot of the LuxEngine project board
- * (github.com/orgs/starbounded-dev/projects/3). Refresh the snapshot with
- * `npm run roadmap:sync`; nothing here should be edited by hand.
- */
+/** Project-board data and presentation rules shared by live and saved data. */
 
 export type BoardStatus = "Todo" | "In Progress" | "Done";
 
@@ -20,6 +16,12 @@ export type BoardItem = {
   parent: number | null;
   subIssues: { total: number; done: number } | null;
   closedAt: string | null;
+};
+
+export type RoadmapSnapshot = {
+  board: { title: string; url: string };
+  syncedAt: string;
+  items: BoardItem[];
 };
 
 export type RoadmapCard = {
@@ -49,11 +51,6 @@ const CUT_LABELS: Record<string, string> = {
   G9: "Discord integration in release builds",
 };
 const CUT_IDS = new Set(Object.keys(CUT_LABELS));
-
-const items = snapshot.items as BoardItem[];
-
-export const board = snapshot.board;
-export const syncedAt = snapshot.syncedAt;
 
 const mustPattern = new RegExp(`^${RELEASE.replace(".", "\\.")} (M\\d+): (.+)$`);
 const rowPattern = /^([A-Z]+\d+[a-z]?): (.+)$/;
@@ -129,58 +126,76 @@ const mustNumber = (c: RoadmapCard) => Number(c.tag?.slice(1) ?? 0);
 const inRelease = (i: BoardItem) => i.milestone === RELEASE;
 const tagOf = (i: BoardItem) => i.title.match(rowPattern)?.[1] ?? "";
 
-export const mustHaves = items
-  .filter((i) => mustPattern.test(i.title))
-  .map(toCard)
-  .sort((a, b) => mustNumber(a) - mustNumber(b));
-
 const isMust = (i: BoardItem) => mustPattern.test(i.title);
-
-export const columns = {
-  wanted: items
-    .filter(
-      (i) =>
-        inRelease(i) &&
-        i.status === "Todo" &&
-        i.priority === "P1" &&
-        !CUT_IDS.has(tagOf(i)),
-    )
-    .map(toCard),
-  mustTodo: items.filter((i) => isMust(i) && i.status === "Todo").map(toCard)
-    .sort((a, b) => mustNumber(a) - mustNumber(b)),
-  inProgress: items
-    .filter((i) => i.status === "In Progress")
-    .map(toCard)
-    .sort((a, b) => (a.tag?.startsWith("M") ? -1 : 0) - (b.tag?.startsWith("M") ? -1 : 0)),
-  shipped: items
-    .filter((i) => i.status === "Done")
-    .map(toCard)
-    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "")),
-};
 
 /** How many cards each column shows before the board is expanded. */
 export const COLLAPSED_PER_COLUMN = 3;
 
-/** The sub-issues of a must-have, in catalog order, for the expanded board. */
-export function subIssuesOf(parent: number | null): RoadmapCard[] {
-  if (parent === null) return [];
-  return items
-    .filter((i) => i.parent === parent)
+export function buildRoadmap({ board, syncedAt, items }: RoadmapSnapshot) {
+  const mustHaves = items
+    .filter(isMust)
     .map(toCard)
-    .sort((a, b) => (a.number ?? 0) - (b.number ?? 0));
+    .sort((a, b) => mustNumber(a) - mustNumber(b));
+
+  const columns = {
+    wanted: items
+      .filter(
+        (i) =>
+          inRelease(i) &&
+          i.status === "Todo" &&
+          i.priority === "P1" &&
+          !CUT_IDS.has(tagOf(i)),
+      )
+      .map(toCard),
+    mustTodo: items
+      .filter((i) => isMust(i) && i.status === "Todo")
+      .map(toCard)
+      .sort((a, b) => mustNumber(a) - mustNumber(b)),
+    inProgress: items
+      .filter((i) => i.status === "In Progress")
+      .map(toCard)
+      .sort(
+        (a, b) =>
+          (a.tag?.startsWith("M") ? -1 : 0) -
+          (b.tag?.startsWith("M") ? -1 : 0),
+      ),
+    shipped: items
+      .filter((i) => i.status === "Done")
+      .map(toCard)
+      .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "")),
+  };
+
+  function subIssuesOf(parent: number | null): RoadmapCard[] {
+    if (parent === null) return [];
+    return items
+      .filter((i) => i.parent === parent)
+      .map(toCard)
+      .sort((a, b) => (a.number ?? 0) - (b.number ?? 0));
+  }
+
+  const cuts = items
+    .filter((i) => inRelease(i) && CUT_IDS.has(tagOf(i)))
+    .map((i) => ({ ...toCard(i), title: CUT_LABELS[tagOf(i)] }));
+
+  return {
+    board,
+    syncedAt,
+    columns,
+    cuts,
+    subIssuesOf,
+    releaseCounts: {
+      issues: items.filter((i) => i.kind === "issue" && inRelease(i)).length,
+      mustHaves: mustHaves.length,
+      wanted: columns.wanted.length,
+      cuts: cuts.length,
+      done: items.filter((i) => i.kind === "issue" && inRelease(i) && i.status === "Done").length,
+    },
+  };
 }
 
-export const cuts = items
-  .filter((i) => inRelease(i) && CUT_IDS.has(tagOf(i)))
-  .map((i) => ({ ...toCard(i), title: CUT_LABELS[tagOf(i)] }));
-
-export const releaseCounts = {
-  issues: items.filter(inRelease).length,
-  mustHaves: mustHaves.length,
-  wanted: columns.wanted.length,
-  cuts: cuts.length,
-  done: items.filter((i) => inRelease(i) && i.status === "Done").length,
-};
+/** Committed copy used when GitHub is unavailable. */
+export const fallbackRoadmap = buildRoadmap(snapshot as RoadmapSnapshot);
+export type RoadmapData = ReturnType<typeof buildRoadmap>;
 
 export function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {

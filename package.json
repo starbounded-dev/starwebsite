@@ -11,7 +11,7 @@
     "docs:serve": "node scripts/docs.mjs serve",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test --test-timeout=15000 tests/interactions.test.tsx",
+    "test": "node --import tsx --test --test-timeout=15000 tests/*.test.ts tests/*.test.tsx",
     "roadmap:sync": "node scripts/roadmap.mjs"
   },
   "dependencies": {

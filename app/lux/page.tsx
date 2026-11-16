@@ -9,13 +9,10 @@ import { ScenePreview } from "@/components/ScenePreview";
 import { Roadmap } from "@/components/Roadmap";
 import { SetupGuide } from "@/components/SetupGuide";
 import { luxRepoUrl } from "@/lib/navigation";
-import {
-  RELEASE,
-  board,
-  formatDate,
-  releaseCounts,
-  syncedAt,
-} from "@/lib/roadmap";
+import { loadRoadmap } from "@/lib/github-roadmap";
+import { RELEASE, formatDate } from "@/lib/roadmap";
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "LuxEngine",
@@ -31,10 +28,8 @@ const specs = [
   { term: "Status", detail: "In development" },
 ];
 
-// Sources: "What works today" in the LuxEngine README on feature/lucky-merge
-// (PR 36, on its way into dev: the built-in audio engine, Soundwave and .NET 10),
-// plus the render features merged in PR 35 (area lights, FFT bloom, glass
-// refraction), which the README does not list yet.
+// Sources: "What works today" in the LuxEngine dev README, including PR 36
+// (built-in audio, Soundwave and .NET 10), plus PR 35's render features.
 const systems = [
   {
     term: "Rendering",
@@ -83,7 +78,9 @@ const systems = [
   },
 ];
 
-export default function LuxPage() {
+export default async function LuxPage() {
+  const { data: roadmap, source } = await loadRoadmap();
+  const { board, releaseCounts, syncedAt } = roadmap;
   return (
     <>
       <Nav engine />
@@ -143,8 +140,8 @@ export default function LuxPage() {
             <h2>What works today.</h2>
             <p>
               The engine is early, so the list is specific. Everything here is
-              in the code. The built-in audio and .NET 10 are in pull request
-              36, which is on its way into the dev branch.
+              in the code. The built-in audio and .NET 10 landed in the dev
+              branch with pull request 36.
             </p>
           </div>
           <dl className="inside-grid">
@@ -185,15 +182,22 @@ export default function LuxPage() {
                 <p className="board-sync">
                   {releaseCounts.issues} issues in the {RELEASE} milestone:{" "}
                   {releaseCounts.mustHaves} must-haves, {releaseCounts.wanted}{" "}
-                  wanted, {releaseCounts.cuts} removals. Synced from the project
-                  board on <time dateTime={syncedAt}>{formatDate(syncedAt)}</time>.
+                  wanted, {releaseCounts.cuts} removals. {source === "github" ? "Updated from GitHub" : "Saved board copy from"}{" "}
+                  <time dateTime={syncedAt}>{formatDate(syncedAt)}</time>.
                 </p>
+                {source === "saved" ? (
+                  <p className="board-sync board-unavailable" role="status">
+                    Live roadmap data is unavailable right now. This saved
+                    copy stays here until the connection returns. Check the{" "}
+                    <a href={board.url}>project board on GitHub</a> for the latest status.
+                  </p>
+                ) : null}
               </div>
               <a href={board.url} className="text-link">
                 Open the project board <Arrow diagonal />
               </a>
             </div>
-            <Roadmap />
+            <Roadmap data={roadmap} />
           </div>
         </section>
 
@@ -204,11 +208,6 @@ export default function LuxPage() {
               There’s no packaged build yet, so you build it yourself. You need
               a C++ toolchain, Python, the Vulkan SDK and .NET 10. Audio is built
               into the engine, so there’s nothing else to install.
-            </p>
-            <p className="setup-note">
-              The dev branch still asks for FMOD until pull request 36 merges.
-              To build the version described here today, clone{" "}
-              <code>feature/lucky-merge</code> instead.
             </p>
             <ul className="requirements" role="list">
               <li>Visual Studio 2022 or 2026</li>
