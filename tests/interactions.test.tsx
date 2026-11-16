@@ -191,15 +191,15 @@ test("roadmap board renders the synced project board with links and counts", () 
   );
   const [wanted, must, progress] = columns;
   assert.ok(
-    within(wanted).getByLabelText(`${roadmap.columns.wanted.length} items`),
+    within(wanted).getByLabelText(`${roadmap.fallbackRoadmap.columns.wanted.length} items`),
   );
   // Each must-have card links its title, plus one link per sub-issue.
   const mustLinks = within(must).getAllByRole("link");
-  const subIssueLinks = roadmap.columns.mustTodo.reduce(
-    (sum, card) => sum + roadmap.subIssuesOf(card.number).length,
+  const subIssueLinks = roadmap.fallbackRoadmap.columns.mustTodo.reduce(
+    (sum, card) => sum + roadmap.fallbackRoadmap.subIssuesOf(card.number).length,
     0,
   );
-  assert.equal(mustLinks.length, roadmap.columns.mustTodo.length + subIssueLinks);
+  assert.equal(mustLinks.length, roadmap.fallbackRoadmap.columns.mustTodo.length + subIssueLinks);
   assert.ok(within(must).getAllByText(/of \d+ sub-issues done/).length > 0);
   for (const link of within(progress).getAllByRole("link")) {
     assert.match(link.getAttribute("href") ?? "", /^https:\/\/github\.com\//);
@@ -222,10 +222,10 @@ test("roadmap board starts collapsed and expands to every item", async () => {
     assert.ok(visible.length <= roadmap.COLLAPSED_PER_COLUMN);
   }
   const shown = [
-    roadmap.columns.wanted,
-    roadmap.columns.mustTodo,
-    roadmap.columns.inProgress,
-    roadmap.columns.shipped,
+    roadmap.fallbackRoadmap.columns.wanted,
+    roadmap.fallbackRoadmap.columns.mustTodo,
+    roadmap.fallbackRoadmap.columns.inProgress,
+    roadmap.fallbackRoadmap.columns.shipped,
   ].reduce((sum, list) => sum + Math.min(list.length, roadmap.COLLAPSED_PER_COLUMN), 0);
   assert.ok(shown <= 4 * roadmap.COLLAPSED_PER_COLUMN);
   assert.ok(screen.getByText(new RegExp(`^Showing ${shown} of \\d+\\.$`)));

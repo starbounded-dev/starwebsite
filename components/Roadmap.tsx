@@ -2,16 +2,14 @@ import { Arrow } from "./Icons";
 import { RoadmapBoard } from "./RoadmapBoard";
 import {
   COLLAPSED_PER_COLUMN,
-  board,
-  columns,
-  cuts,
+  fallbackRoadmap,
   formatDate,
-  subIssuesOf,
   type BoardStatus,
   type RoadmapCard,
+  type RoadmapData,
 } from "@/lib/roadmap";
 
-// The LuxEngine project board, rendered from the snapshot in lib/roadmap.json.
+// The LuxEngine project board, rendered from live GitHub data or its saved copy.
 // Work moves left to right as it lands, the same way it does on the board.
 // Collapsed, each column shows COLLAPSED_PER_COLUMN cards; expanded, the board
 // shows every item and each must-have's sub-issues.
@@ -72,14 +70,14 @@ function Progress({ total, done }: { total: number; done: number }) {
 }
 
 /** A must-have's sub-issues, shown only on the expanded board. */
-function SubIssues({ cards }: { cards: RoadmapCard[] }) {
+function SubIssues({ cards, boardUrl }: { cards: RoadmapCard[]; boardUrl: string }) {
   if (cards.length === 0) return null;
   return (
     <ul className="board-subissues" role="list" aria-label="Sub-issues" data-extra>
       {cards.map((card) => (
         <li key={card.key} data-status={stateOf[card.status]}>
           <StateIcon state={stateOf[card.status]} />
-          <a href={card.url ?? board.url}>
+          <a href={card.url ?? boardUrl}>
             <span className="board-row-tag">{card.tag}</span> {card.title}
           </a>
         </li>
@@ -92,10 +90,14 @@ function Card({
   card,
   state,
   extra,
+  subIssuesOf,
+  boardUrl,
 }: {
   card: RoadmapCard;
   state: ColumnState;
   extra: boolean;
+  subIssuesOf: RoadmapData["subIssuesOf"];
+  boardUrl: string;
 }) {
   const subs = card.progress ? subIssuesOf(card.number) : [];
   return (
@@ -121,17 +123,17 @@ function Card({
             {card.size ? <li>Size {card.size}</li> : null}
             {card.date ? <li>{formatDate(card.date)}</li> : null}
           </ul>
-          <SubIssues cards={subs} />
+          <SubIssues cards={subs} boardUrl={boardUrl} />
         </div>
       </div>
     </li>
   );
 }
 
-function CompactRow({ card, extra }: { card: RoadmapCard; extra: boolean }) {
+function CompactRow({ card, extra, boardUrl }: { card: RoadmapCard; extra: boolean; boardUrl: string }) {
   return (
     <li data-extra={extra || undefined}>
-      <a href={card.url ?? board.url} className="board-row">
+      <a href={card.url ?? boardUrl} className="board-row">
         <StateIcon state="planned" />
         <span className="board-row-tag">{card.tag}</span>
         <span>{card.title}</span>
@@ -189,7 +191,8 @@ function Column({ id, name, state, theme, text, count, children }: ColumnProps) 
 
 const isExtra = (index: number) => index >= COLLAPSED_PER_COLUMN;
 
-export function Roadmap() {
+export function Roadmap({ data = fallbackRoadmap }: { data?: RoadmapData }) {
+  const { board, columns, cuts, subIssuesOf } = data;
   const lists = [
     columns.wanted,
     columns.mustTodo,
@@ -219,7 +222,7 @@ export function Roadmap() {
         >
           <ul className="board-rows" role="list">
             {columns.wanted.map((card, index) => (
-              <CompactRow key={card.key} card={card} extra={isExtra(index)} />
+              <CompactRow key={card.key} card={card} extra={isExtra(index)} boardUrl={board.url} />
             ))}
           </ul>
         </Column>
@@ -239,6 +242,8 @@ export function Roadmap() {
                 card={card}
                 state="next"
                 extra={isExtra(index)}
+                subIssuesOf={subIssuesOf}
+                boardUrl={board.url}
               />
             ))}
           </ul>
@@ -259,6 +264,8 @@ export function Roadmap() {
                 card={card}
                 state="active"
                 extra={isExtra(index)}
+                subIssuesOf={subIssuesOf}
+                boardUrl={board.url}
               />
             ))}
           </ul>
@@ -279,6 +286,8 @@ export function Roadmap() {
                 card={card}
                 state="done"
                 extra={isExtra(index)}
+                subIssuesOf={subIssuesOf}
+                boardUrl={board.url}
               />
             ))}
           </ul>

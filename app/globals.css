@@ -1258,6 +1258,17 @@
   .board-sync {
     font-size: 15px !important;
   }
+  .board-unavailable {
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-control);
+    background: var(--surface-soft);
+    padding: 12px 16px;
+  }
+  .board-unavailable a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
   .board-cuts {
     margin-top: 8px;
     max-width: 80ch;

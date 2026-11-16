@@ -19,7 +19,7 @@ Every box here must be ticked before this can merge. The "PR checklist" check fa
 
 ## When it applies
 
-- [ ] Ran `npm run roadmap:sync` and committed `lib/roadmap.json` after moving cards on the project board
+- [ ] Refreshed the backup `lib/roadmap.json` with `npm run roadmap:sync` if this PR changes project board items or prepares a release
 - [ ] Screenshots or a short recording of the visible change are below
 - [ ] Docs pages say which LuxEngine branch they describe
 

@@ -1,9 +1,8 @@
 // Saves the LuxEngine project board (github.com/orgs/starbounded-dev/projects/3)
-// to lib/roadmap.json, which the /lux roadmap renders from.
+// to lib/roadmap.json, the /lux roadmap's fallback when GitHub is unavailable.
 //
-// GitHub serves Projects only through GraphQL, and GraphQL always needs a
-// token, so the board is snapshotted and committed instead of fetched at build
-// time. Run `npm run roadmap:sync` after moving cards on the board.
+// The site reads the project through GraphQL with a server-side token. Run
+// `npm run roadmap:sync` occasionally to keep its committed fallback useful.
 //
 // Token: GITHUB_TOKEN if set, otherwise `gh auth token`. It needs the
 // read:project (or project) scope.
